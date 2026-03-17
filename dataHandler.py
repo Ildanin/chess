@@ -19,9 +19,26 @@ def file_transform(input_filename: str, output_filename: str | None = None) -> s
                     black_elo = 1000
                 out_file.write("LobbyElo " + str((black_elo + white_elo) // 2) + '\n')
             elif line.split()[0] == '1.':
-                out_file.write(line)
+                pgn_string = remove_evaluations(line)
+                pgn_string = remove_assessments(pgn_string)
+                out_file.write(pgn_string)
     out_file.close()
     return out_file.name
+
+def remove_evaluations(pgn_string: str) -> str:
+    while pgn_string.count('{') > 0:
+        start = pgn_string.index('{')
+        stop = pgn_string.index('}')
+        pgn_string = pgn_string[:start-1] + pgn_string[stop+1:]
+    while pgn_string.count('...') > 0:
+        start = pgn_string.index('...')
+        pgn_string = pgn_string[:start-2] + pgn_string[start+3:]
+    return pgn_string
+
+def remove_assessments(pgn_string: str) -> str:
+    pgn_string = pgn_string.replace('?', '')
+    pgn_string = pgn_string.replace('!', '')
+    return pgn_string
 
 def data_load(filename: str) -> list:
     data: list[list] = [[]]
