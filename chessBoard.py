@@ -1,11 +1,8 @@
 import pygame as pg
 from settings import *
 from positionClass import Position
-from notationClass import Notation
+from notation import ForsythEdwardsNotation, PortableGameNotation
 import os
-from math import copysign
-from typing import Literal
-from time import perf_counter
 
 
 BB = pg.image.load(os.path.join("assets", "black_bishop.png "))
@@ -23,7 +20,7 @@ WQ = pg.image.load(os.path.join("assets", "white_queen.png "))
 WR = pg.image.load(os.path.join("assets", "white_rook.png"))
 
 class ChessBoard:
-    def __init__(self, screen: pg.Surface, x: int, y: int, size: int = BOARD_SIZE, position: Position = Position(Notation()),
+    def __init__(self, screen: pg.Surface, x: int, y: int, size: int = BOARD_SIZE, position: Position = Position(ForsythEdwardsNotation(INIT_POSITION)),
                  white_color: tuple = WHITE_COLOR, black_color: tuple = BLACK_COLOR, highlight_clor: tuple = HIGHLIGHT_COLOR, higlight_moves: bool = HIGHLIGHT_MOVES) -> None:
         self.screen = screen
         self.x = x
@@ -60,9 +57,9 @@ class ChessBoard:
 
     def get_square(self, mouse_x: int, mouse_y: int) -> tuple[int, int]: #add flip
         "Returns the coordinates of the square relative to its position on the screen"
-        xid = (mouse_x-self.x) // self.square_size
-        yid = (mouse_y-self.y) // self.square_size
-        return xid, yid
+        board_x = (mouse_x-self.x) // self.square_size
+        board_y = (mouse_y-self.y) // self.square_size
+        return board_x, board_y
 
     def get_piece(self, board_x: int, board_y: int) -> str:
         "Returns the piece located in the given coordinates"
@@ -88,7 +85,7 @@ class ChessBoard:
                 self.promotion = (board_x, board_y)
                 self.higlighted_squares = [self.promotion]
             else:
-                self.move_piece(*self.prev_pos, board_x, board_y, available_squares=self.higlighted_squares)
+                self.position.move(*self.prev_pos, board_x, board_y, available_squares=self.higlighted_squares)
                 self.unpick()
         else:
             self.pick(board_x, board_y)
@@ -108,12 +105,12 @@ class ChessBoard:
             raise ValueError("no pawn promotion is present")
         if self.promotion[1] == 0:
             if self.promotion[0] == board_x and (0 <= board_y < 4):
-                self.move_piece(*self.prev_pos, *self.promotion, ['Q', 'N', 'R', 'B'][board_y], self.higlighted_squares)
+                self.position.move(*self.prev_pos, *self.promotion, ['Q', 'N', 'R', 'B'][board_y], self.higlighted_squares)
             else:
                 self.position.set_piece(*self.prev_pos, 'P')
         elif self.promotion[1] == 7:
             if self.promotion[0] == board_x and (4 <= board_y < 8):
-                self.move_piece(*self.prev_pos, *self.promotion, ['q', 'n', 'r', 'b'][7 - board_y], self.higlighted_squares)
+                self.position.move(*self.prev_pos, *self.promotion, ['q', 'n', 'r', 'b'][7 - board_y], self.higlighted_squares)
             else:
                 self.position.set_piece(*self.prev_pos, 'p')
         self.promotion = None        
@@ -121,6 +118,7 @@ class ChessBoard:
     def draw(self) -> None: #add flip
         "Draws board with pieces to the screen"
         self.draw_board()
+        self.draw_coordinates()
         self.higlight()
         self.draw_pieces()
         self.draw_promotion_screen()
@@ -142,6 +140,9 @@ class ChessBoard:
                                          self.square_size * board_y + self.y, 
                                          self.square_size, self.square_size))
     
+    def draw_coordinates(self) -> None: #add flip #todo
+        pass
+
     def draw_pieces(self) -> None: #add flip
         "Draws pieces to the screen"
         for i, piece in enumerate(self.position):
@@ -189,11 +190,6 @@ class ChessBoard:
     def isdraw(self) -> bool:
         "Returns True if position is a draw, False otherwise"
         return self.position.isdraw()
-    
-    def move_piece(self, board_x1: int, board_y1: int, board_x2: int, board_y2: int, 
-                   promote_to: str | None = None, available_squares: list[tuple[int, int]] | None = None) -> bool:
-        "Moves the piece if it is posible. Returns True if moved successfully, False otherwise"
-        return self.position.move(board_x1, board_y1, board_x2, board_y2, promote_to, available_squares)
     
 '''    def reset(self) -> list[str]:
         "Returns the board to its originall state"
