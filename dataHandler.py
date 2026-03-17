@@ -1,4 +1,4 @@
-def file_transform(input_filename: str, output_filename: str | None = None) -> None:
+def file_transform(input_filename: str, output_filename: str | None = None) -> str:
     if output_filename == None:
         out_file = open(input_filename.partition('.')[0] + 'txt', 'w')
     else:
@@ -7,11 +7,21 @@ def file_transform(input_filename: str, output_filename: str | None = None) -> N
         for line in inp_file:
             if line == '\n':
                 pass
-            elif line.split()[0][1:] in ["WhiteElo", "BlackElo"]:
-                out_file.write(line[1:10] + line.split('"')[1] + '\n')
+            elif line.split()[0][1:] == "WhiteElo":
+                if line.split('"')[1] != '?':
+                    white_elo = int(line.split('"')[1])
+                else:
+                    white_elo = 1000
+            elif line.split()[0][1:] == "BlackElo":
+                if line.split('"')[1] != '?':
+                    black_elo = int(line.split('"')[1])
+                else:
+                    black_elo = 1000
+                out_file.write("LobbyElo " + str((black_elo + white_elo) // 2) + '\n')
             elif line.split()[0] == '1.':
                 out_file.write(line)
     out_file.close()
+    return out_file.name
 
 def data_load(filename: str) -> list:
     data: list[list] = [[]]

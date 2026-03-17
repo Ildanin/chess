@@ -10,7 +10,6 @@ board = ChessBoard(screen, BOARD_X, BOARD_Y)
 while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
-            #print(board.history)
             exit()
         elif event.type == pg.MOUSEBUTTONDOWN:
             #t1 = perf_counter()
