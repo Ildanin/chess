@@ -8,9 +8,9 @@ class Position:
         self.pos_array = init_position.get_position_array()
         self.is_white_to_move = init_position.get_is_white_to_move()
         self.castles = init_position.get_castles()
-        self.en_passant: tuple | None = init_position.get_en_passant()
-        self.halfmove_clock: int = init_position.get_halfmove_clock()
-        self.fullmove_number: int = init_position.get_fullmove_number()
+        self.en_passant = init_position.get_en_passant()
+        self.halfmove_clock = init_position.get_halfmove_clock()
+        self.fullmove_number = init_position.get_fullmove_number()
     
     def __iter__(self):
         return iter(self.pos_array)
@@ -63,22 +63,17 @@ class Position:
         notation += f'{self.halfmove_clock} {self.fullmove_number}'
         return ForsythEdwardsNotation(FEN_notation = notation[1:])
 
-    def ischeck(self) -> bool:
+    def ischecked(self) -> bool:
         if self.is_white_to_move:
-            king_x, king_y = self.get_location('K')
+            return self.isattacked(*self.get_location('K'))
         else:
-            king_x, king_y = self.get_location('k')
-        return self.isattacked(king_x, king_y)
+            return self.isattacked(*self.get_location('k'))
 
     def isdraw(self) -> bool:
+        if self.ischecked():
+            return False
         if self.pos_array.count('') == 62:
             return True
-        if self.is_white_to_move:
-            king_x, king_y = self.get_location('K')
-        else:
-            king_x, king_y = self.get_location('k')
-        if self.isattacked(king_x, king_y): 
-            return False
         for x1, y1, x2, y2 in product(range(8), repeat=4):
             if self.is_move_possible(x1, y1, y2, x2) == True:
                 return False 
@@ -104,12 +99,18 @@ class Position:
         return moves
     
     def move(self, board_x1: int, board_y1: int, board_x2: int, board_y2: int, 
-                promote_to: str | None = None, available_squares: list[tuple[int, int]] | None = None) -> bool:
+             promote_to: str | None = None, available_squares: list[tuple[int, int]] | None = None) -> bool:
         "Moves the piece if it is posible. Returns True if moved successfully, False otherwise"
         if self.is_move_possible(board_x1, board_y1, board_x2, board_y2, available_squares):
+            if self.get_piece(board_x1, board_y1).lower() == 'p':
+                self.halfmove_clock = 0
+            else:
+                self.halfmove_clock += 1
+            if self.is_white_to_move == False:
+                self.fullmove_number += 1
             self.raw_move(board_x1, board_y1, board_x2, board_y2, promote_to)
-            self.history.append(self.get_FEN())
             self.is_white_to_move = not self.is_white_to_move
+            #self.history.append()
             return True
         return False
     
@@ -188,18 +189,18 @@ class Position:
             self.is_white_to_move == self.get_piece(board_x2, board_y2).isupper()):
             return False
         return (self.ismovable(board_x1, board_y1, board_x2, board_y2, piece) and 
-            not(self.ischecked(board_x1, board_y1, board_x2, board_y2)))
+            not(self.is_moved_into_check(board_x1, board_y1, board_x2, board_y2)))
     
     def ispromotion(self, board_y2: int, piece: str) -> bool:
         return (board_y2 == 0 and piece == 'P' or 
                 board_y2 == 7 and piece == 'p')
 
-    def ischecked(self, board_x1: int, board_y1: int, board_x2: int, board_y2: int) -> bool:
+    def is_moved_into_check(self, board_x1: int, board_y1: int, board_x2: int, board_y2: int) -> bool:
         "Returns True if the king will be in check after the given move, False otherwise"
         saved_states = self.pos_array.copy(), self.castles.copy(), self.en_passant #saves the state of the game
         self.raw_move(board_x1, board_y1, board_x2, board_y2) #makes a move
-        ischecked = self.ischeck()
-        self.pos_array, self.castles, self.en_passant = saved_states #returns pos_array to its initial state
+        ischecked = self.ischecked()
+        self.pos_array, self.castles, self.en_passant = saved_states #returns position to its initial state
         return ischecked
 
     "'ismovable' functions return True if the piece can make the given move, False otherwise"
@@ -278,22 +279,28 @@ class Position:
             return True
         return False
 
-    def ismovable_king(self, board_x1: int, board_y1: int, board_x2: int, board_y2: int) -> bool: #rewrite add attack checks
+    def ismovable_king(self, board_x1: int, board_y1: int, board_x2: int, board_y2: int) -> bool:
         if (-1 <= board_x2 - board_x1 <= 1) and (-1 <= board_y2 - board_y1 <= 1): 
             return True
+        if self.isattacked(board_x1, board_y1):
+            return False
         if self.is_white_to_move and self.get_piece(4, 7) == 'K' and board_y2 == 7:
             if (board_x2 == 2 and self.castles['Q'] and self.get_piece(0, 7) == 'R' and 
-                self.get_piece(1, 7) == '' and self.get_piece(3, 7) == ''): 
+                self.get_piece(1, 7) == '' and self.get_piece(3, 7) == '' and
+                not(self.isattacked(3, 7))): 
                 return True
             elif (board_x2 == 6 and self.castles['K'] and self.get_piece(7, 7) == 'R' and 
-                    self.get_piece(5, 7) == ''): 
+                  self.get_piece(5, 7) == ''and
+                  not(self.isattacked(5, 7))): 
                 return True
         elif not(self.is_white_to_move) and self.get_piece(4, 0) == 'k' and board_y2 == 0:
             if (board_x2 == 2 and self.castles['q'] and self.get_piece(0, 0) == 'r' and
-                self.get_piece(1, 0) == '' and self.get_piece(3, 0) == ''): 
+                self.get_piece(1, 0) == '' and self.get_piece(3, 0) == ''and
+                not(self.isattacked(3, 0))): 
                 return True
             elif (board_x2 == 6 and self.castles['k'] and self.get_piece(7, 0) == 'r' and 
-                    self.get_piece(5, 0) == ''): 
+                  self.get_piece(5, 0) == ''and 
+                  not(self.isattacked(5, 0))): 
                 return True
         return False
 
