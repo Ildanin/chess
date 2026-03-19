@@ -2,9 +2,8 @@ from notation import PortableGameNotation
 
 def file_transform(input_filename: str, output_filename: str | None = None) -> str:
     if output_filename == None:
-        out_file = open(input_filename.partition('.')[0] + 'txt', 'w')
-    else:
-        out_file = open(output_filename, 'w')
+        output_filename = input_filename.partition('.')[0] + 'txt'
+    data = []
     with open(input_filename) as inp_file:
         for line in inp_file:
             if line == '\n':
@@ -19,13 +18,16 @@ def file_transform(input_filename: str, output_filename: str | None = None) -> s
                     black_elo = int(line.split('"')[1])
                 else:
                     black_elo = 1000
-                out_file.write("LobbyElo " + str((black_elo + white_elo) // 2) + '\n')
+                avg_elo = (black_elo + white_elo) // 2
             elif line.split()[0] == '1.':
                 pgn_string = remove_evaluations(line)
                 pgn_string = remove_assessments(pgn_string)
-                out_file.write(pgn_string)
-    out_file.close()
-    return out_file.name
+                data.append((avg_elo, pgn_string))
+    with open(output_filename, 'w') as out_file:
+        for avg_elo, pgn_string in data:
+            out_file.write("LobbyElo " + str(avg_elo) + '\n')
+            out_file.write(pgn_string)
+    return output_filename
 
 def remove_evaluations(pgn_string: str) -> str:
     while pgn_string.count('{') > 0:
