@@ -13,6 +13,9 @@ HIGHLIGHT_COLOR = (0, 255, 0)
 HIGHLIGHT_MOVES = True
 INIT_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
+#Data
+UNTRANSFORMED = "lichess_db_standard_rated_2013-01.pgn"
+
 #Network stats
 INFO = [2, 10, 10, 3]
 ACTIVATOR = 'L_ReLU'

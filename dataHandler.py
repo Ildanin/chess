@@ -1,9 +1,10 @@
 from notation import PortableGameNotation
+from config import UNTRANSFORMED
 
 def file_transform(input_filename: str, output_filename: str | None = None) -> str:
     if output_filename == None:
         output_filename = input_filename.partition('.')[0] + 'txt'
-    data = []
+    data: list[tuple] = []
     with open(input_filename) as inp_file:
         for line in inp_file:
             if line == '\n':
@@ -58,5 +59,4 @@ def data_load(filename: str, start: int = 0, stop: int | None = None) -> list[tu
         return data[:-1]
 
 if __name__ == '__main__':
-    FILENAME = "lichess_db_standard_rated_2013-01.pgn"
-    file_transform(FILENAME)
+    file_transform(UNTRANSFORMED)
