@@ -1,3 +1,5 @@
+from notation import PortableGameNotation
+
 def file_transform(input_filename: str, output_filename: str | None = None) -> str:
     if output_filename == None:
         out_file = open(input_filename.partition('.')[0] + 'txt', 'w')
@@ -40,16 +42,18 @@ def remove_assessments(pgn_string: str) -> str:
     pgn_string = pgn_string.replace('!', '')
     return pgn_string
 
-def data_load(filename: str) -> list:
-    data: list[list] = [[]]
-    with open(filename) as file:
-        for line in file:
-            if line.split()[0][1:] in ["WhiteElo", "BlackElo"]:
-                data[-1].append(int(line.split()[-1]))
-            elif line.split()[0] == '1.':
-                data[-1].append(line)
-                data.append([])
-    return data[:-1]
+def data_load(filename: str, start: int = 0, stop: int | None = None) -> list[tuple[int, PortableGameNotation]]:
+        data: list[tuple] = []
+        with open(filename) as file:
+            for i, line in enumerate(file):
+                if start > i//2 or (stop != None and i//2 >= stop):
+                    continue
+                if line.split()[0] == "LobbyElo":
+                    elo = int(line.split()[-1])
+                elif line.split()[0] == '1.':
+                    pgn = PortableGameNotation(line[:-1])
+                    data.append((elo, pgn))
+        return data[:-1]
 
 if __name__ == '__main__':
     FILENAME = "lichess_db_standard_rated_2013-01.pgn"
