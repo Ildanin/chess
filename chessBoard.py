@@ -127,15 +127,15 @@ class ChessBoard:
         "Draws the board to the screen"
         for rank in range(0, 8):
             for file in range(0, 8):
-                if (file % 2 == 0) ^ (rank % 2 == 0):
+                if (rank + file)%2 == 0:
                     pg.draw.rect(self.screen, 
-                                 self.black_color, 
+                                 self.white_color, 
                                  pg.Rect(self.square_size * file + self.x, 
                                          self.square_size * rank + self.y, 
                                          self.square_size, self.square_size))
                 else:
                     pg.draw.rect(self.screen, 
-                                 self.white_color, 
+                                 self.black_color, 
                                  pg.Rect(self.square_size * file + self.x, 
                                          self.square_size * rank + self.y, 
                                          self.square_size, self.square_size))
