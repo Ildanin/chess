@@ -25,6 +25,9 @@ class BoardMove:
     def __init__(self, file1: int, rank1: int, file2: int, rank2: int) -> None:
         self.start_square = BoardSquare(file1, rank1)
         self.target_square = BoardSquare(file2, rank2)
+    
+    def __iter__(self):
+        return iter((*self.start_square, *self.target_square))
 
 class ForsythEdwardsNotation:
     def __init__(self, FEN: str = CLASSIC_CHESS_INITIAL_POSITION) -> None:
