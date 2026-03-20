@@ -57,60 +57,60 @@ class ChessBoard:
 
     def get_square(self, mouse_x: int, mouse_y: int) -> tuple[int, int]: #add flip
         "Returns the coordinates of the square relative to its position on the screen"
-        board_x = (mouse_x-self.x) // self.square_size
-        board_y = (mouse_y-self.y) // self.square_size
-        return board_x, board_y
+        file = (mouse_x-self.x) // self.square_size
+        rank = (mouse_y-self.y) // self.square_size
+        return file, rank
 
-    def get_piece(self, board_x: int, board_y: int) -> str:
+    def get_piece(self, file: int, rank: int) -> str:
         "Returns the piece located in the given coordinates"
-        if 0 <= board_x < 8 and 0 <= board_y < 8:
-            return self.position.get_piece(board_x, board_y)
+        if 0 <= file < 8 and 0 <= rank < 8:
+            return self.position.get_piece(file, rank)
         return ''
     
     def process_left_click(self, mouse_x: int, mouse_y: int) -> None:
         "Handles user's lmb press"
-        board_x, board_y = self.get_square(mouse_x, mouse_y)
-        if not(0 <= board_x < 8 and 0 <= board_y < 8):
+        file, rank = self.get_square(mouse_x, mouse_y)
+        if not(0 <= file < 8 and 0 <= rank < 8):
             return None
         if self.prev_pos == None:
-            self.pick(board_x, board_y)
+            self.pick(file, rank)
         elif self.promotion != None:
-            self.pick_promotion(board_x, board_y)
+            self.pick_promotion(file, rank)
             self.unpick()
-        elif (board_x, board_y) == self.prev_pos:
+        elif (file, rank) == self.prev_pos:
             self.unpick()
-        elif self.position.is_move_possible(*self.prev_pos, board_x, board_y, self.higlighted_squares):
-            if self.position.ispromotion(board_y, self.get_piece(*self.prev_pos)):
+        elif self.position.is_move_possible(*self.prev_pos, file, rank, self.higlighted_squares):
+            if self.position.ispromotion(rank, self.get_piece(*self.prev_pos)):
                 self.position.set_piece(*self.prev_pos, '')
-                self.promotion = (board_x, board_y)
+                self.promotion = (file, rank)
                 self.higlighted_squares = [self.promotion]
             else:
-                self.position.move(*self.prev_pos, board_x, board_y, available_squares=self.higlighted_squares)
+                self.position.move(*self.prev_pos, file, rank, available_squares=self.higlighted_squares)
                 self.unpick()
         else:
-            self.pick(board_x, board_y)
+            self.pick(file, rank)
     
-    def pick(self, board_x: int, board_y: int) -> None:
-        self.prev_pos = (board_x, board_y)
+    def pick(self, file: int, rank: int) -> None:
+        self.prev_pos = (file, rank)
         if self.higlight_moves:
-            self.higlighted_squares = self.position.get_highlights(board_x, board_y)
+            self.higlighted_squares = self.position.get_highlights(file, rank)
 
     def unpick(self) -> None:
         self.prev_pos = None
         self.higlighted_squares = None
 
-    def pick_promotion(self, board_x: int, board_y: int) -> None:
+    def pick_promotion(self, file: int, rank: int) -> None:
         "Handles user's clicks on the screen during a pawn promotion"
         if self.promotion == None or self.prev_pos == None:
             raise ValueError("no pawn promotion is present")
         if self.promotion[1] == 0:
-            if self.promotion[0] == board_x and (0 <= board_y < 4):
-                self.position.move(*self.prev_pos, *self.promotion, ['Q', 'N', 'R', 'B'][board_y], self.higlighted_squares)
+            if self.promotion[0] == file and (0 <= rank < 4):
+                self.position.move(*self.prev_pos, *self.promotion, ['Q', 'N', 'R', 'B'][rank], self.higlighted_squares)
             else:
                 self.position.set_piece(*self.prev_pos, 'P')
         elif self.promotion[1] == 7:
-            if self.promotion[0] == board_x and (4 <= board_y < 8):
-                self.position.move(*self.prev_pos, *self.promotion, ['q', 'n', 'r', 'b'][7 - board_y], self.higlighted_squares)
+            if self.promotion[0] == file and (4 <= rank < 8):
+                self.position.move(*self.prev_pos, *self.promotion, ['q', 'n', 'r', 'b'][7 - rank], self.higlighted_squares)
             else:
                 self.position.set_piece(*self.prev_pos, 'p')
         self.promotion = None        
@@ -125,19 +125,19 @@ class ChessBoard:
 
     def draw_board(self) -> None: #add flip
         "Draws the board to the screen"
-        for board_y in range(0, 8):
-            for board_x in range(0, 8):
-                if (board_x % 2 == 0) ^ (board_y % 2 == 0):
+        for rank in range(0, 8):
+            for file in range(0, 8):
+                if (file % 2 == 0) ^ (rank % 2 == 0):
                     pg.draw.rect(self.screen, 
                                  self.black_color, 
-                                 pg.Rect(self.square_size * board_x + self.x, 
-                                         self.square_size * board_y + self.y, 
+                                 pg.Rect(self.square_size * file + self.x, 
+                                         self.square_size * rank + self.y, 
                                          self.square_size, self.square_size))
                 else:
                     pg.draw.rect(self.screen, 
                                  self.white_color, 
-                                 pg.Rect(self.square_size * board_x + self.x, 
-                                         self.square_size * board_y + self.y, 
+                                 pg.Rect(self.square_size * file + self.x, 
+                                         self.square_size * rank + self.y, 
                                          self.square_size, self.square_size))
     
     def draw_coordinates(self) -> None: #add flip #todo
