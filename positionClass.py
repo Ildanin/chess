@@ -1,5 +1,5 @@
 from math import copysign
-from notation import ForsythEdwardsNotation, board_to_algebraic
+from notation import ForsythEdwardsNotation, board_to_algebraic, BoardMove
 from itertools import product
 
 class Position:
