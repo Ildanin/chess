@@ -20,6 +20,10 @@ class BoardSquare:
     
     def __iter__(self):
         return iter((self.file, self.rank))
+    
+    def inrange(self, lower_bound: int, upper_bound: int) -> bool:
+        return (lower_bound <= self.file < upper_bound and 
+                lower_bound <= self.rank < upper_bound)
 
 class BoardMove:
     def __init__(self, file1: int, rank1: int, file2: int, rank2: int) -> None:
