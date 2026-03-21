@@ -1,4 +1,6 @@
+from typing import Iterator
 CLASSIC_CHESS_INITIAL_POSITION = "nbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
 
 class BoardSquare:
     def __init__(self, file: int, rank: int) -> None:
@@ -6,7 +8,7 @@ class BoardSquare:
         self.rank = rank
         self.id = file + 8*rank
     
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int]:
         return iter((self.file, self.rank))
     
     def __eq__(self, square: object) -> bool:
@@ -30,7 +32,7 @@ class BoardMove:
         self.start_square = BoardSquare(file1, rank1)
         self.target_square = BoardSquare(file2, rank2)
     
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int]:
         return iter((*self.start_square, *self.target_square))
 
 
