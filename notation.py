@@ -21,6 +21,9 @@ class BoardSquare:
     def __iter__(self):
         return iter((self.file, self.rank))
     
+    def __eq__(self, square) -> bool:
+        return (self.file == square.file and self.rank == square.rank)
+
     def isinrange(self, lower_bound: int, upper_bound: int) -> bool:
         return (lower_bound <= self.file < upper_bound and 
                 lower_bound <= self.rank < upper_bound)
