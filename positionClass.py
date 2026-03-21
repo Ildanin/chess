@@ -31,7 +31,7 @@ class Position:
         "Returns a list of coordinates to which the piece can move"
         squares = []
         for x, y in product(range(8), repeat=2):
-            if self.is_move_possible(BoardMove(*square, x, y)):
+            if self.is_move_possible(BoardMove(square, BoardSquare(x, y))):
                 squares.append(BoardSquare(x, y))
         return squares
     
@@ -75,7 +75,7 @@ class Position:
         if self.pos_array.count('') == 62:
             return True
         for x1, y1, x2, y2 in product(range(8), repeat=4):
-            if self.is_move_possible(BoardMove(x1, y1, y2, x2)) == True:
+            if self.is_move_possible(BoardMove(BoardSquare(x1, y1), BoardSquare(y2, x2))) == True:
                 return False 
         return True
 
@@ -87,14 +87,14 @@ class Position:
         if not self.isattacked(king_square):
             return False
         for x1, y1, x2, y2 in product(range(8), repeat=4):
-            if self.is_move_possible(BoardMove(x1, y1, y2, x2)) == True:
+            if self.is_move_possible(BoardMove(BoardSquare(x1, y1), BoardSquare(y2, x2))) == True:
                 return False
         return True
 
     def get_possible_moves(self) -> list[BoardMove]:
         moves = []
         for x1, y1, x2, y2 in product(range(8), repeat=4):
-            move = BoardMove(x1, y1, y2, x2)
+            move = BoardMove(BoardSquare(x1, y1), BoardSquare(y2, x2))
             if self.is_move_possible(move) == True:
                 moves.append(move)
         return moves

@@ -79,13 +79,13 @@ class ChessBoard:
             self.unpick()
         elif square == self.prev_square:
             self.unpick()
-        elif self.position.is_move_possible(BoardMove(*self.prev_square, *square), self.higlighted_squares):
+        elif self.position.is_move_possible(BoardMove(self.prev_square, square), self.higlighted_squares):
             if self.position.ispromotion(square.rank, self.get_piece(self.prev_square)):
-                self.position.set_piece(BoardSquare(*self.prev_square), '')
+                self.position.set_piece(self.prev_square, '')
                 self.promotion = square
                 self.higlighted_squares = [self.promotion]
             else:
-                self.position.move(BoardMove(*self.prev_square, *square), available_squares=self.higlighted_squares)
+                self.position.move(BoardMove(self.prev_square, square), available_squares=self.higlighted_squares)
                 self.unpick()
         else:
             self.pick(square)
@@ -105,12 +105,12 @@ class ChessBoard:
             raise ValueError("no pawn promotion is present")
         if self.promotion.rank == 0:
             if self.promotion.file == square.file and (0 <= square.rank < 4):
-                self.position.move(BoardMove(*self.prev_square, *self.promotion), ['Q', 'N', 'R', 'B'][square.rank], self.higlighted_squares)
+                self.position.move(BoardMove(self.prev_square, self.promotion), ['Q', 'N', 'R', 'B'][square.rank], self.higlighted_squares)
             else:
                 self.position.set_piece(self.prev_square, 'P')
         elif self.promotion.rank == 7:
             if self.promotion.file == square.file and (4 <= square.rank < 8):
-                self.position.move(BoardMove(*self.prev_square, *self.promotion), ['q', 'n', 'r', 'b'][7 - square.rank], self.higlighted_squares)
+                self.position.move(BoardMove(self.prev_square, self.promotion), ['q', 'n', 'r', 'b'][7 - square.rank], self.higlighted_squares)
             else:
                 self.position.set_piece(self.prev_square, 'p')
         self.promotion = None        
