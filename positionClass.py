@@ -2,6 +2,10 @@ from math import copysign
 from notation import ForsythEdwardsNotation, BoardMove, BoardSquare
 from itertools import product
 
+KINGS_FILE = 4
+QUEEN_ROOKS_FILE = 0
+KING_ROOKS_FILE = 7
+
 class Position:
     def __init__(self, init_position: ForsythEdwardsNotation): #add PortableGameNotation
         self.history = [init_position]
@@ -16,19 +20,19 @@ class Position:
         return iter(self.pos_array)
 
     def get_piece(self, square: BoardSquare) -> str:
-        "Returns the piece given the coordinates"
+        "Returns the piece given the square"
         return self.pos_array[square.id]
-    
-    def get_location(self, piece: str) -> BoardSquare:
-        "Return first occurring coordinate of the piece"
-        ind = self.pos_array.index(piece)
-        return BoardSquare(ind%8, ind//8)
     
     def set_piece(self, square: BoardSquare, piece: str = '') -> None:
         self.pos_array[square.id] = piece
     
+    def get_location(self, piece: str) -> BoardSquare:
+        "Return first occurring square of the piece"
+        ind = self.pos_array.index(piece)
+        return BoardSquare(ind%8, ind//8)
+    
     def get_highlights(self, square: BoardSquare) -> list[BoardSquare]:
-        "Returns a list of coordinates to which the piece can move"
+        "Returns a list of square to which the piece can move"
         squares = []
         for x, y in product(range(8), repeat=2):
             if self.is_move_possible(BoardMove(square, BoardSquare(x, y))):
@@ -140,19 +144,19 @@ class Position:
 
     def handle_castling(self, file1: int, file2: int, piece: str) -> None:
         if piece == 'R':
-            if file1 == 0:
+            if file1 == QUEEN_ROOKS_FILE:
                 self.castles['Q'] = False
-            elif file1 == 7:
+            elif file1 == KING_ROOKS_FILE:
                 self.castles['K'] = False
         elif piece == 'r':
-            if file1 == 0:
+            if file1 == QUEEN_ROOKS_FILE:
                 self.castles['q'] = False
-            elif file1 == 7:
+            elif file1 == KING_ROOKS_FILE:
                 self.castles['k'] = False
         elif piece == 'K':
             self.castles['Q'] = False
             self.castles['K'] = False
-            if file1 == 4:
+            if file1 == KINGS_FILE:
                 if file2 == 2:
                     self.set_piece(BoardSquare(3, 7), 'R')
                     self.set_piece(BoardSquare(0, 7), '')
@@ -162,7 +166,7 @@ class Position:
         elif piece == 'k':
             self.castles['q'] = False
             self.castles['k'] = False
-            if file1 == 4:
+            if file1 == KINGS_FILE:
                 if file2 == 2:
                     self.set_piece(BoardSquare(3, 0), 'r')
                     self.set_piece(BoardSquare(0, 0), '')
@@ -178,7 +182,7 @@ class Position:
         "Returns True if the move can be made, False otherwise"
         if available_squares != None:
             return (move.target_square in available_squares)
-        if not(move.start_square.isinrange(0, 8) and move.target_square.isinrange(0, 8)):
+        if not(move.start_square.isinrange() and move.target_square.isinrange()):
             return False
         piece = self.get_piece(move.start_square)
         if piece == '':
@@ -295,17 +299,17 @@ class Position:
                 self.get_piece(BoardSquare(1, 7)) == '' and self.get_piece(BoardSquare(3, 7)) == '' and
                 not(self.isattacked(BoardSquare(3, 7)))): 
                 return True
-            elif (file2 == 6 and self.castles['K'] and self.get_piece(BoardSquare(7, 7)) == 'R' and 
-                  self.get_piece(BoardSquare(5, 7)) == ''and
+            if (file2 == 6 and self.castles['K'] and self.get_piece(BoardSquare(7, 7)) == 'R' and 
+                  self.get_piece(BoardSquare(5, 7)) == '' and
                   not(self.isattacked(BoardSquare(5, 7)))): 
                 return True
         elif not(self.is_white_to_move) and self.get_piece(BoardSquare(4, 0)) == 'k' and rank2 == 0:
             if (file2 == 2 and self.castles['q'] and self.get_piece(BoardSquare(0, 0)) == 'r' and
-                self.get_piece(BoardSquare(1, 0)) == '' and self.get_piece(BoardSquare(3, 0)) == ''and
+                self.get_piece(BoardSquare(1, 0)) == '' and self.get_piece(BoardSquare(3, 0)) == '' and
                 not(self.isattacked(BoardSquare(3, 0)))): 
                 return True
-            elif (file2 == 6 and self.castles['k'] and self.get_piece(BoardSquare(7, 0)) == 'r' and 
-                  self.get_piece(BoardSquare(5, 0)) == ''and 
+            if (file2 == 6 and self.castles['k'] and self.get_piece(BoardSquare(7, 0)) == 'r' and 
+                  self.get_piece(BoardSquare(5, 0)) == '' and 
                   not(self.isattacked(BoardSquare(5, 0)))): 
                 return True
         return False
