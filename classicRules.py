@@ -172,10 +172,8 @@ def ismovable_rook(position: Position, move: BoardMove) -> bool:
     return False
 
 def ismovable_queen(position: Position, move: BoardMove) -> bool:
-    if (position.ismovable_rook(move) or 
-        position.ismovable_bishop(move)):
-        return True
-    return False
+    return(position.ismovable_rook(move) or 
+           position.ismovable_bishop(move))
 
 def ismovable_king(position: Position, move: BoardMove) -> bool:
     file1, rank1, file2, rank2 = move
