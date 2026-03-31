@@ -199,8 +199,8 @@ class Position:
             not(self.is_moved_into_check(move)))
     
     def ispromotion(self, rank2: int, piece: str) -> bool:
-        return (rank2 == 0 and piece == 'P' or 
-                rank2 == 7 and piece == 'p')
+        return(rank2 == 0 and piece == 'P' or 
+               rank2 == 7 and piece == 'p')
 
     def is_moved_into_check(self, move: BoardMove) -> bool:
         "Returns True if the king will be in check after the given move, False otherwise"
@@ -297,23 +297,19 @@ class Position:
             return True
         if self.isattacked(move.start_square):
             return False
-        if self.is_white_to_move and self.get_piece(BoardSquare(4, 7)) == 'K' and rank2 == 7:
-            if (file2 == 2 and self.castles['Q'] and self.get_piece(BoardSquare(0, 7)) == 'R' and 
-                self.get_piece(BoardSquare(1, 7)) == '' and self.get_piece(BoardSquare(3, 7)) == '' and
+        if self.is_white_to_move and rank2 == 7:
+            if (file2 == 2 and self.castles['Q'] and self.get_rank(7)[:5] == ['R', '', '', '', 'K'] and 
                 not(self.isattacked(BoardSquare(3, 7)))): 
                 return True
-            if (file2 == 6 and self.castles['K'] and self.get_piece(BoardSquare(7, 7)) == 'R' and 
-                  self.get_piece(BoardSquare(5, 7)) == '' and
-                  not(self.isattacked(BoardSquare(5, 7)))): 
+            if (file2 == 6 and self.castles['K'] and self.get_rank(7)[4:] == ['K', '', '', 'R'] and 
+                not(self.isattacked(BoardSquare(5, 7)))): 
                 return True
-        elif not(self.is_white_to_move) and self.get_piece(BoardSquare(4, 0)) == 'k' and rank2 == 0:
-            if (file2 == 2 and self.castles['q'] and self.get_piece(BoardSquare(0, 0)) == 'r' and
-                self.get_piece(BoardSquare(1, 0)) == '' and self.get_piece(BoardSquare(3, 0)) == '' and
+        elif not(self.is_white_to_move) and rank2 == 0:
+            if (file2 == 2 and self.castles['q'] and self.get_rank(0)[:5] == ['r', '', '', '', 'k'] and 
                 not(self.isattacked(BoardSquare(3, 0)))): 
                 return True
-            if (file2 == 6 and self.castles['k'] and self.get_piece(BoardSquare(7, 0)) == 'r' and 
-                  self.get_piece(BoardSquare(5, 0)) == '' and 
-                  not(self.isattacked(BoardSquare(5, 0)))): 
+            if (file2 == 6 and self.castles['k'] and self.get_rank(0)[4:] == ['k', '', '', 'r'] and 
+                not(self.isattacked(BoardSquare(5, 0)))): 
                 return True
         return False
 
