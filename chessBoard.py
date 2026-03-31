@@ -27,7 +27,6 @@ class ChessBoard:
         self.x = x
         self.y = y
         self.square_size = size//8
-        self.size = self.square_size*8
         self.white_color = white_color
         self.black_color = black_color
         self.highlight_clor = highlight_clor
