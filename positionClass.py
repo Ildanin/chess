@@ -350,12 +350,11 @@ class Position:
             knight = 'n'
         else:
             knight = 'N'
-        for dy in [-2, -1, 1, 2]:
-            for dx in [-2, -1, 1, 2]:
-                if (abs(dx) != abs(dy) and 
-                    0 <= square.file + dx < 8 and 0 <= square.rank + dy < 8 and
-                    self.get_piece(BoardSquare(square.file + dx, square.rank + dy)) == knight):
-                    return True
+        for dx, dy in product([-2, -1, 1, 2], repeat=2):
+            if (abs(dx) != abs(dy) and 
+                0 <= square.file + dx < 8 and 0 <= square.rank + dy < 8 and
+                self.get_piece(BoardSquare(square.file + dx, square.rank + dy)) == knight):
+                return True
         return False
 
     def isattacked_by_bishop_queen(self, square: BoardSquare) -> bool:
