@@ -24,13 +24,10 @@ class BoardSquare:
         return(lower_bound <= self.file < upper_bound and 
                lower_bound <= self.rank < upper_bound)
 
-    def move(self, dx: int = 0, dy: int = 0) -> None:
+    def move(self, dx: int = 0, dy: int = 0):
         self.file += dx
         self.rank += dy
         self.id = self.file + 8*self.rank
-
-    def moved(self, dx: int = 0, dy: int = 0):
-        self.move(dx, dy)
         return self
     
     def get_algebraic(self) -> str:
