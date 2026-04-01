@@ -24,7 +24,7 @@ class BoardSquare:
         return(lower_bound <= self.file < upper_bound and 
                lower_bound <= self.rank < upper_bound)
 
-    def moved(self, dx: int = 0, dy: int = 0):
+    def shifted(self, dx: int = 0, dy: int = 0):
         return BoardSquare(self.file + dx, self.rank + dy)
     
     def get_algebraic(self) -> str:
