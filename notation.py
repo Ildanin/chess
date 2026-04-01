@@ -33,7 +33,12 @@ class BoardMove:
     
     def __iter__(self) -> Iterator[int]:
         return iter((*self.start_square, *self.target_square))
-
+    
+    def get_dx(self) -> int:
+        return self.target_square.file - self.start_square.file
+    
+    def get_dy(self) -> int:
+        return self.target_square.rank - self.start_square.rank
 
 def algebraic_to_board(algebraic: str) -> BoardSquare:
     x_comp = algebraic[0]
