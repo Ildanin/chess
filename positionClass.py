@@ -37,7 +37,7 @@ class Position:
     def get_highlights(self, square: BoardSquare) -> list[BoardSquare]:
         "Returns a list of square to which the piece can move"
         squares = []
-        for x, y in product(range(8), repeat=2):
+        for x, y in product(range(8), repeat=2): #redo
             if self.is_move_possible(BoardMove(square, BoardSquare(x, y))):
                 squares.append(BoardSquare(x, y))
         return squares
@@ -83,7 +83,7 @@ class Position:
             return True
         for x1, y1, x2, y2 in product(range(8), repeat=4):
             if self.is_move_possible(BoardMove(BoardSquare(x1, y1), BoardSquare(y2, x2))) == True:
-                return False 
+                return False
         return True
 
     def ischeckmate(self) -> bool:
@@ -133,13 +133,13 @@ class Position:
         file1, rank1, file2, rank2 = move
         if piece == 'P':
             if move.target_square == self.en_passant:
-                self.set_piece(BoardSquare(file2, rank2 + 1))
+                self.set_piece(move.target_square.shift(0, 1))
             elif move.get_dy() == -2:
                 self.en_passant = BoardSquare(file1, 5)
                 return None
         elif piece == 'p':
             if move.target_square == self.en_passant:
-                self.set_piece(BoardSquare(file2, rank2 - 1))
+                self.set_piece(move.target_square.shift(0, -1))
             elif move.get_dy() == 2:
                 self.en_passant = BoardSquare(file1, 2)
                 return None
@@ -325,18 +325,18 @@ class Position:
     def isattacked_by_wpawn(self, square: BoardSquare) -> bool:
         if square.rank == 7:
             return False
-        if square.file - 1 >= 0 and self.get_piece(BoardSquare(square.file-1, square.rank+1)) == 'P':
+        if square.file > 0 and self.get_piece(square.shift(-1, 1)) == 'P':
             return True
-        if square.file + 1 <= 7 and self.get_piece(BoardSquare(square.file+1, square.rank+1)) == 'P':
+        if square.file < 7 and self.get_piece(square.shift(1, 1)) == 'P':
             return True
         return False
 
     def isattacked_by_bpawn(self, square: BoardSquare) -> bool:
         if square.rank == 0:
             return False
-        if square.file - 1 >= 0 and self.get_piece(BoardSquare(square.file-1, square.rank-1)) == 'p':
+        if square.file > 0 and self.get_piece(square.shift(-1, -1)) == 'p':
             return True
-        if square.file + 1 <= 7 and self.get_piece(BoardSquare(square.file+1, square.rank-1)) == 'p':
+        if square.file < 7 and self.get_piece(square.shift(1, -1)) == 'p':
             return True
         return False
 
@@ -346,9 +346,9 @@ class Position:
         else:
             knight = 'N'
         for dx, dy in product([-2, -1, 1, 2], repeat=2):
-            if (abs(dx) != abs(dy) and 
-                0 <= square.file + dx < 8 and 0 <= square.rank + dy < 8 and
-                self.get_piece(BoardSquare(square.file + dx, square.rank + dy)) == knight):
+            knight_square = square.shift(dx, dy)
+            if (abs(dx) != abs(dy) and knight_square.isinrange() and
+                self.get_piece(knight_square) == knight):
                 return True
         return False
 
