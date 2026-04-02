@@ -127,22 +127,21 @@ class Position:
         self.set_piece(move.target_square, piece)
         self.set_piece(move.start_square, '')
         self.handle_en_passant(move, piece)
-        self.handle_castling(move.start_square.file, move.target_square.file, piece)
+        self.handle_castling(move.file1, move.file2, piece)
         self.handle_promotion(move.target_square, promote_to)
     
     def handle_en_passant(self, move: BoardMove, piece: str) -> None:
-        file1, rank1, file2, rank2 = move
         if piece == 'P':
             if move.target_square == self.en_passant:
                 self.set_piece(move.target_square.shift(0, 1))
             elif move.get_dy() == -2:
-                self.en_passant = BoardSquare(file1, 5)
+                self.en_passant = BoardSquare(move.file1, 5)
                 return None
         elif piece == 'p':
             if move.target_square == self.en_passant:
                 self.set_piece(move.target_square.shift(0, -1))
             elif move.get_dy() == 2:
-                self.en_passant = BoardSquare(file1, 2)
+                self.en_passant = BoardSquare(move.file1, 2)
                 return None
         self.en_passant = None
 
@@ -224,11 +223,10 @@ class Position:
             case _: return False
     
     def ismovable_wpawn(self, move: BoardMove) -> bool:
-        file1, rank1, file2, rank2 = move
         if move.get_dx() == 0 and self.get_piece(move.target_square) == '':
             if move.get_dy() == -1: 
                 return True
-            if rank1 == 6 and rank2 == 4 and self.get_piece(BoardSquare(file2, 5)) == '': 
+            if move.rank1 == 6 and move.rank2 == 4 and self.get_piece(BoardSquare(move.file2, 5)) == '': 
                 return True
         elif (move.get_dy() == -1 and abs(move.get_dx()) == 1):
             if self.get_piece(move.target_square) != '': 
@@ -238,11 +236,10 @@ class Position:
         return False
 
     def ismovable_bpawn(self, move: BoardMove) -> bool:
-        file1, rank1, file2, rank2 = move
         if move.get_dx() == 0 and self.get_piece(move.target_square) == '':
             if move.get_dy() == 1: 
                 return True
-            if rank1 == 1 and rank2 == 3 and self.get_piece(BoardSquare(file2, 2)) == '': 
+            if move.rank1 == 1 and move.rank2 == 3 and self.get_piece(BoardSquare(move.file2, 2)) == '': 
                 return True
         elif (move.get_dy() == 1 and abs(move.get_dx()) == 1):
             if self.get_piece(move.target_square) != '': 
@@ -256,29 +253,27 @@ class Position:
                (abs(move.get_dy()) == 1 and abs(move.get_dx()) == 2))
 
     def ismovable_bishop(self, move: BoardMove) -> bool:
-        file1, rank1, file2, rank2 = move
         if abs(move.get_dx()) != abs(move.get_dy()): 
             return False
         x_direction = int(copysign(1, move.get_dx()))
         y_direction = int(copysign(1, move.get_dy()))
-        for x, y in zip(range(file1 + x_direction, file2, x_direction), 
-                        range(rank1 + y_direction, rank2, y_direction)):
+        for x, y in zip(range(move.file1 + x_direction, move.file2, x_direction), 
+                        range(move.rank1 + y_direction, move.rank2, y_direction)):
             if self.get_piece(BoardSquare(x, y)) != '': 
                 return False
         return True
 
     def ismovable_rook(self, move: BoardMove) -> bool:
-        file1, rank1, file2, rank2 = move
         if move.get_dx() == 0:
             y_direction = int(copysign(1, move.get_dy()))
-            for y in range(rank1 + y_direction, rank2, y_direction):
-                if self.get_piece(BoardSquare(file1, y)) != '': 
+            for y in range(move.rank1 + y_direction, move.rank2, y_direction):
+                if self.get_piece(BoardSquare(move.file1, y)) != '': 
                     return False
             return True
         if move.get_dy() == 0:
             x_direction = int(copysign(1, move.get_dx()))
-            for x in range(file1 + x_direction, file2, x_direction):
-                if self.get_piece(BoardSquare(x, rank1)) != '': 
+            for x in range(move.file1 + x_direction, move.file2, x_direction):
+                if self.get_piece(BoardSquare(x, move.rank1)) != '': 
                     return False
             return True
         return False
@@ -288,23 +283,22 @@ class Position:
                self.ismovable_bishop(move))
 
     def ismovable_king(self, move: BoardMove) -> bool:
-        file1, rank1, file2, rank2 = move
         if (-1 <= move.get_dx() <= 1) and (-1 <= move.get_dy() <= 1): 
             return True
         if self.isattacked(move.start_square):
             return False
-        if self.white_move and rank2 == 7:
-            if (file2 == 2 and self.castles['Q'] and self.get_rank(7)[:5] == ['R', '', '', '', 'K'] and 
+        if self.white_move and move.rank2 == 7:
+            if (move.file2 == 2 and self.castles['Q'] and self.get_rank(7)[:5] == ['R', '', '', '', 'K'] and 
                 not(self.isattacked(BoardSquare(3, 7)))): 
                 return True
-            if (file2 == 6 and self.castles['K'] and self.get_rank(7)[4:] == ['K', '', '', 'R'] and 
+            if (move.file2 == 6 and self.castles['K'] and self.get_rank(7)[4:] == ['K', '', '', 'R'] and 
                 not(self.isattacked(BoardSquare(5, 7)))): 
                 return True
-        elif not(self.white_move) and rank2 == 0:
-            if (file2 == 2 and self.castles['q'] and self.get_rank(0)[:5] == ['r', '', '', '', 'k'] and 
+        elif not(self.white_move) and move.rank2 == 0:
+            if (move.file2 == 2 and self.castles['q'] and self.get_rank(0)[:5] == ['r', '', '', '', 'k'] and 
                 not(self.isattacked(BoardSquare(3, 0)))): 
                 return True
-            if (file2 == 6 and self.castles['k'] and self.get_rank(0)[4:] == ['k', '', '', 'r'] and 
+            if (move.file2 == 6 and self.castles['k'] and self.get_rank(0)[4:] == ['k', '', '', 'r'] and 
                 not(self.isattacked(BoardSquare(5, 0)))): 
                 return True
         return False
