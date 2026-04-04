@@ -103,7 +103,7 @@ class Position:
                 return False
         return True
 
-    def get_possible_moves(self) -> list[BoardMove]:
+    def get_possible_moves(self) -> list[BoardMove]: #rework
         moves = []
         for x1, y1, x2, y2 in product(range(8), repeat=4):
             move = BoardMove(BoardSquare(x1, y1), BoardSquare(y2, x2))
@@ -431,3 +431,128 @@ class Position:
             if self.get_piece(BoardSquare(x, y)) == king:
                 return True
         return False
+    
+    def getcandidates(self, square: BoardSquare, piece: str) -> list[BoardSquare]:
+        "Returns the list of squares from wich the piece can be moved to the given square"
+        match piece:
+            case 'P':       return self.getcandidates_wpawn(square)
+            case 'p':       return self.getcandidates_bpawn(square)
+            case 'N' | 'n': return self.getcandidates_knight(square, piece)
+            case 'B' | 'b': return self.getcandidates_bishop(square, piece)
+            case 'R' | 'r': return self.getcandidates_rook(square, piece)
+            case 'Q' | 'q': return self.getcandidates_queen(square, piece)
+            case 'K' | 'k': return self.getcandidates_king(square, piece)
+            case _: return []
+
+    def getcandidates_wpawn(self, square: BoardSquare) -> list[BoardSquare]:
+        if square.rank == 7:
+            return []
+        candidates = []
+        start_square = square.shift(-1, 1)
+        if square.file > 0 and self.get_piece(start_square) == 'P':
+            candidates.append(start_square)
+        start_square = square.shift(1, 1)
+        if square.file < 7 and self.get_piece(start_square) == 'P':
+            candidates.append(start_square)
+        return candidates
+
+    def getcandidates_bpawn(self, square: BoardSquare) -> list[BoardSquare]:
+        if square.rank == 0:
+            return []
+        candidates = []
+        start_square = square.shift(-1, -1)
+        if square.file > 0 and self.get_piece(start_square) == 'p':
+            candidates.append(start_square)
+        start_square = square.shift(1, -1)
+        if square.file < 7 and self.get_piece(start_square) == 'p':
+            candidates.append(start_square)
+        return candidates
+
+    def getcandidates_knight(self, square: BoardSquare, knight: str) -> list[BoardSquare]:
+        candidates = []
+        for dx, dy in product([-2, -1, 1, 2], repeat=2):
+            knight_square = square.shift(dx, dy)
+            if (abs(dx) != abs(dy) and knight_square.isinrange() and
+                self.get_piece(knight_square) == knight):
+                candidates.append(knight_square)
+        return candidates
+
+    def getcandidates_bishop(self, square: BoardSquare, bishop: str) -> list[BoardSquare]:
+        candidates = []
+        for x, y in zip(range(square.file-1, -1, -1), 
+                        range(square.rank-1, -1, -1)):
+            start_square = BoardSquare(x, y)
+            piece = self.get_piece(start_square)
+            if piece == bishop:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        for x, y in zip(range(square.file+1, 8, 1), 
+                        range(square.rank-1, -1, -1)):
+            start_square = BoardSquare(x, y)
+            piece = self.get_piece(start_square)
+            if piece == bishop:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        for x, y in zip(range(square.file-1, -1, -1), 
+                        range(square.rank+1, 8, 1)):
+            start_square = BoardSquare(x, y)
+            piece = self.get_piece(start_square)
+            if piece == bishop:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        for x, y in zip(range(square.file+1, 8, 1), 
+                        range(square.rank+1, 8, 1)):
+            start_square = BoardSquare(x, y)
+            piece = self.get_piece(start_square)
+            if piece == bishop:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        return candidates
+
+    def getcandidates_rook(self, square: BoardSquare, rook: str) -> list[BoardSquare]:
+        candidates = []
+        for y in range(square.rank+1, 8, 1):
+            start_square = BoardSquare(square.file, y)
+            piece = self.get_piece(start_square)
+            if piece == rook:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        for y in range(square.rank-1, -1, -1):
+            start_square = BoardSquare(square.file, y)
+            piece = self.get_piece(start_square)
+            if piece == rook:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        for x in range(square.file+1, 8, 1):
+            start_square = BoardSquare(x, square.rank)
+            piece = self.get_piece(start_square)
+            if piece == rook:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        for x in range(square.file-1, -1, -1):
+            start_square = BoardSquare(x, square.rank)
+            piece = self.get_piece(start_square)
+            if piece == rook:
+                candidates.append(start_square)
+            if piece != '':
+                break
+        return candidates
+    
+    def getcandidates_queen(self, square: BoardSquare, queen: str) -> list[BoardSquare]:
+        return self.getcandidates_bishop(square, queen) + self.getcandidates_rook(square, queen)
+
+    def getcandidates_king(self, square: BoardSquare, king: str) -> list[BoardSquare]:
+        candidates = []
+        for x, y in product(range(max(0, square.rank-1), min(square.rank + 1, 7) + 1), 
+                            range(max(0, square.file-1), min(square.file + 1, 7) + 1)):
+            start_square = BoardSquare(x, y)
+            if self.get_piece(start_square) == king:
+                candidates.append(start_square)
+        return candidates
