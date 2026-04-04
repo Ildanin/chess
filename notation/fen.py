@@ -1,7 +1,7 @@
 from notation.square import BoardSquare, algebraic_to_board
 
 class ForsythEdwardsNotation:
-    def __init__(self, FEN: str = "nbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
+    def __init__(self, FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
         self.string = FEN
         self.list = FEN.split()
     
