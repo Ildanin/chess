@@ -16,7 +16,7 @@ class Position:
         self.en_passant = init_position.get_en_passant()
         self.halfmove_clock = init_position.get_halfmove_clock()
         self.fullmove_number = init_position.get_fullmove_number()
-    
+
     def __iter__(self):
         return iter(self.pos_array)
 
@@ -26,18 +26,18 @@ class Position:
     def get_piece(self, square: BoardSquare) -> str:
         "Returns the piece given the square"
         return self.pos_array[square.id]
-    
+
     def get_rank(self, rank: int) -> list[str]:
         return self.pos_array[8*rank : 8*(rank+1)]
-    
+
     def set_piece(self, square: BoardSquare, piece: str = '') -> None:
         self.pos_array[square.id] = piece
-    
+
     def get_location(self, piece: str) -> BoardSquare:
         "Return first occurring square of the piece"
         ind = self.pos_array.index(piece)
         return BoardSquare(ind%8, ind//8)
-    
+
     def get_highlights(self, square: BoardSquare) -> list[BoardSquare]:
         "Returns a list of square to which the piece can move"
         squares = []
@@ -46,7 +46,7 @@ class Position:
             if self.is_move_possible(BoardMove(square, target_square)):
                 squares.append(target_square)
         return squares
-    
+
     def get_FEN(self) -> ForsythEdwardsNotation:
         notation = ''
         for i, piece in enumerate(self.pos_array):
@@ -103,14 +103,22 @@ class Position:
                 return False
         return True
 
-    def get_possible_moves(self) -> list[BoardMove]: #rework
+    def get_possible_moves(self) -> list[BoardMove]:
+        moves = []
+        for x, y in product(range(8), repeat=2):
+            target_square = BoardSquare(x, y)
+            for start_square in self.getcandidates_all(target_square):
+                moves.append(BoardMove(start_square, target_square))
+        return moves
+    
+    def get_possible_moves_old(self) -> list[BoardMove]:
         moves = []
         for x1, y1, x2, y2 in product(range(8), repeat=4):
             move = BoardMove(BoardSquare(x1, y1), BoardSquare(y2, x2))
             if self.is_move_possible(move) == True:
                 moves.append(move)
         return moves
-    
+
     def move(self, move: BoardMove, promote_to: str | None = None, available_squares: list[BoardSquare] | None = None) -> bool:
         "Moves the piece if it is posible. Returns True if moved successfully, False otherwise"
         if not(self.is_move_possible(move, available_squares)):
@@ -124,7 +132,7 @@ class Position:
         self.raw_move(move, promote_to)
         self.white_move = not self.white_move
         return True
-    
+
     def raw_move(self, move: BoardMove, promote_to: str | None = None) -> None:
         "Makes a move without any checks and does not pass the move"
         piece = self.get_piece(move.start_square)
@@ -133,7 +141,7 @@ class Position:
         self.handle_en_passant(move, piece)
         self.handle_castling(move.file1, move.file2, piece)
         self.handle_promotion(move.target_square, promote_to)
-    
+
     def handle_en_passant(self, move: BoardMove, piece: str) -> None:
         if piece == 'P':
             if move.target_square == self.en_passant:
@@ -201,7 +209,7 @@ class Position:
             return False
         return(self.ismovable(move, piece) and 
            not(self.is_moved_into_check(move)))
-    
+
     def ispromotion(self, rank2: int, piece: str) -> bool:
         return(rank2 == 0 and piece == 'P' or 
                rank2 == 7 and piece == 'p')
@@ -225,7 +233,7 @@ class Position:
             case 'Q' | 'q': return self.ismovable_queen(move)
             case 'K' | 'k': return self.ismovable_king(move)
             case _: return False
-    
+
     def ismovable_wpawn(self, move: BoardMove) -> bool:
         if move.get_dx() == 0 and self.get_piece(move.target_square) == '':
             if move.get_dy() == -1: 
@@ -314,7 +322,7 @@ class Position:
                 self.isattacked_by_bishop_queen(square) or 
                 self.isattacked_by_rook_queen(square) or 
                 self.isattacked_by_king(square))
-    
+
     def isattacked_by_pawn(self, square: BoardSquare) -> bool:
         if self.white_move:
             return self.isattacked_by_bpawn(square)
@@ -431,7 +439,7 @@ class Position:
             if self.get_piece(BoardSquare(x, y)) == king:
                 return True
         return False
-    
+
     def getcandidates(self, square: BoardSquare, piece: str) -> list[BoardSquare]:
         "Returns the list of squares from wich the piece can be moved to the given square"
         match piece:
@@ -443,7 +451,7 @@ class Position:
             case 'Q' | 'q': return self.getcandidates_queen(square, piece)
             case 'K' | 'k': return self.getcandidates_king(square, piece)
             case _: return []
-        
+
     def getcandidates_all(self, square: BoardSquare) -> list[BoardSquare]:
         if self.white_move:
             return(self.getcandidates_wpawn(square) + 
@@ -560,7 +568,7 @@ class Position:
             if piece != '':
                 break
         return candidates
-    
+
     def getcandidates_queen(self, square: BoardSquare, queen: str) -> list[BoardSquare]:
         return self.getcandidates_bishop(square, queen) + self.getcandidates_rook(square, queen)
 
