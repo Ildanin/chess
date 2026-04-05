@@ -8,6 +8,9 @@ KINGS_FILE = 4
 QUEEN_ROOKS_FILE = 0
 KING_ROOKS_FILE = 7
 
+WHITE_BACK_RANK = 7
+BLACK_BACK_RANK = 0
+
 class Position:
     def __init__(self, init_position: ForsythEdwardsNotation):
         self.history = [init_position]
@@ -300,19 +303,19 @@ class Position:
             return True
         if self.isattacked(move.start_square):
             return False
-        if self.white_move and move.rank2 == 7:
-            if (move.file2 == 2 and self.castles['Q'] and self.get_rank(7)[:5] == ['R', '', '', '', 'K'] and 
-                not(self.isattacked(BoardSquare(3, 7)))): 
+        if self.white_move and move.rank2 == WHITE_BACK_RANK:
+            if (move.file2 == 2 and self.castles['Q'] and self.get_rank(WHITE_BACK_RANK)[:5] == ['R', '', '', '', 'K'] and 
+                not(self.isattacked(BoardSquare(3, WHITE_BACK_RANK)))): 
                 return True
-            if (move.file2 == 6 and self.castles['K'] and self.get_rank(7)[4:] == ['K', '', '', 'R'] and 
-                not(self.isattacked(BoardSquare(5, 7)))): 
+            if (move.file2 == 6 and self.castles['K'] and self.get_rank(WHITE_BACK_RANK)[4:] == ['K', '', '', 'R'] and 
+                not(self.isattacked(BoardSquare(5, WHITE_BACK_RANK)))): 
                 return True
-        elif not(self.white_move) and move.rank2 == 0:
-            if (move.file2 == 2 and self.castles['q'] and self.get_rank(0)[:5] == ['r', '', '', '', 'k'] and 
-                not(self.isattacked(BoardSquare(3, 0)))): 
+        elif not(self.white_move) and move.rank2 == BLACK_BACK_RANK:
+            if (move.file2 == 2 and self.castles['q'] and self.get_rank(BLACK_BACK_RANK)[:5] == ['r', '', '', '', 'k'] and 
+                not(self.isattacked(BoardSquare(3, BLACK_BACK_RANK)))): 
                 return True
-            if (move.file2 == 6 and self.castles['k'] and self.get_rank(0)[4:] == ['k', '', '', 'r'] and 
-                not(self.isattacked(BoardSquare(5, 0)))): 
+            if (move.file2 == 6 and self.castles['k'] and self.get_rank(BLACK_BACK_RANK)[4:] == ['k', '', '', 'r'] and 
+                not(self.isattacked(BoardSquare(5, BLACK_BACK_RANK)))): 
                 return True
         return False
 
@@ -688,23 +691,23 @@ class Position:
     def getsquares_wking(self, start_square: BoardSquare) -> Generator[BoardSquare]:
         for target_square in self.getsquares_king(start_square):
             yield target_square
-        if start_square == (KINGS_FILE, 7):
+        if start_square == (KINGS_FILE, WHITE_BACK_RANK):
             return
-        if (self.castles['Q'] and self.get_rank(7)[:5] == ['R', '', '', '', 'K'] and 
-            not(self.isattacked(BoardSquare(3, 7)))): 
-            yield BoardSquare(2, 7)
+        if (self.castles['Q'] and self.get_rank(WHITE_BACK_RANK)[:5] == ['R', '', '', '', 'K'] and 
+            not(self.isattacked(BoardSquare(3, WHITE_BACK_RANK)))): 
+            yield BoardSquare(2, WHITE_BACK_RANK)
         if (self.castles['K'] and self.get_rank(7)[4:] == ['K', '', '', 'R'] and 
-            not(self.isattacked(BoardSquare(5, 7)))): 
-            yield BoardSquare(6, 7)
+            not(self.isattacked(BoardSquare(5, WHITE_BACK_RANK)))): 
+            yield BoardSquare(6, WHITE_BACK_RANK)
 
     def getsquares_bking(self, start_square: BoardSquare) -> Generator[BoardSquare]:
         for target_square in self.getsquares_king(start_square):
             yield target_square
-        if start_square == (KINGS_FILE, 0):
+        if start_square == (KINGS_FILE, BLACK_BACK_RANK):
             return
-        if (self.castles['q'] and self.get_rank(0)[:5] == ['r', '', '', '', 'k'] and 
-            not(self.isattacked(BoardSquare(3, 0)))): 
-            yield BoardSquare(2, 0)
-        if (self.castles['k'] and self.get_rank(0)[4:] == ['k', '', '', 'r'] and 
-            not(self.isattacked(BoardSquare(5, 0)))): 
-            yield BoardSquare(6, 0)
+        if (self.castles['q'] and self.get_rank(BLACK_BACK_RANK)[:5] == ['r', '', '', '', 'k'] and 
+            not(self.isattacked(BoardSquare(3, BLACK_BACK_RANK)))): 
+            yield BoardSquare(2, BLACK_BACK_RANK)
+        if (self.castles['k'] and self.get_rank(BLACK_BACK_RANK)[4:] == ['k', '', '', 'r'] and 
+            not(self.isattacked(BoardSquare(5, BLACK_BACK_RANK)))): 
+            yield BoardSquare(6, BLACK_BACK_RANK)
