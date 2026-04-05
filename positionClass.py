@@ -38,7 +38,7 @@ class Position:
         ind = self.pos_array.index(piece)
         return BoardSquare(ind%8, ind//8)
 
-    def get_highlights(self, square: BoardSquare) -> list[BoardSquare]:
+    def get_highlights(self, square: BoardSquare) -> list[BoardSquare]: #rework
         "Returns a list of square to which the piece can move"
         squares = []
         for x, y in product(range(8), repeat=2):
@@ -81,7 +81,7 @@ class Position:
         else:
             return self.isattacked(self.get_location('k'))
 
-    def isdraw(self) -> bool:
+    def isdraw(self) -> bool: #rework
         if self.ischecked():
             return False
         if self.pos_array.count('') == 62:
@@ -91,7 +91,7 @@ class Position:
                 return False
         return True
 
-    def ischeckmate(self) -> bool:
+    def ischeckmate(self) -> bool: #rework
         if self.white_move:
             king_square = self.get_location('K')
         else:
@@ -103,7 +103,7 @@ class Position:
                 return False
         return True
 
-    def get_possible_moves(self) -> list[BoardMove]:
+    def get_possible_moves(self) -> list[BoardMove]: #rework
         moves = []
         for x, y in product(range(8), repeat=2):
             target_square = BoardSquare(x, y)
@@ -111,7 +111,7 @@ class Position:
                 moves.append(BoardMove(start_square, target_square))
         return moves
     
-    def get_possible_moves_old(self) -> list[BoardMove]:
+    def get_possible_moves_old(self) -> list[BoardMove]: #rework
         moves = []
         for x1, y1, x2, y2 in product(range(8), repeat=4):
             move = BoardMove(BoardSquare(x1, y1), BoardSquare(y2, x2))
@@ -316,7 +316,7 @@ class Position:
         return False
 
     "'isatacked' functions return True if the given square is attacked by an enemy piece, False otherwise"
-    def isattacked(self, square: BoardSquare) -> bool:
+    def isattacked(self, square: BoardSquare) -> bool: #rework
         return (self.isattacked_by_pawn(square) or 
                 self.isattacked_by_knight(square) or 
                 self.isattacked_by_bishop_queen(square) or 
@@ -440,7 +440,7 @@ class Position:
                 return True
         return False
 
-    def getcandidates(self, square: BoardSquare, piece: str) -> list[BoardSquare]:
+    def getcandidates(self, square: BoardSquare, piece: str) -> list[BoardSquare]: #rework
         "Returns the list of squares from wich the piece can be moved to the given square"
         match piece:
             case 'P':       return self.getcandidates_wpawn(square)
