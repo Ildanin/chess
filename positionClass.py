@@ -2,6 +2,7 @@ from math import copysign
 from notation.fen import ForsythEdwardsNotation
 from notation.square import BoardSquare, BoardMove
 from itertools import product
+from typing import Generator
 
 KINGS_FILE = 4
 QUEEN_ROOKS_FILE = 0
@@ -580,3 +581,130 @@ class Position:
             if self.get_piece(start_square) == king:
                 candidates.append(start_square)
         return candidates
+    
+    def getsquares_wpawn(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        target_square = start_square.shift(0, -1)
+        if self.get_piece(target_square) == '':
+            yield target_square
+        if start_square.file != 0:
+            target_square = start_square.shift(-1, -1)
+            if self.get_piece(target_square) != '':
+                yield target_square
+        if start_square.file != 7:
+            target_square = start_square.shift(1, -1)
+            if self.get_piece(target_square) != '':
+                yield target_square
+        if start_square.rank != 6:
+            return
+        target_square = start_square.shift(0, -2)
+        if self.get_piece(target_square) == '':
+            yield target_square
+
+    def getsquares_bpawn(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        target_square = start_square.shift(0, 1)
+        if self.get_piece(target_square) == '':
+            yield target_square
+        if start_square.file != 0:
+            target_square = start_square.shift(-1, 1)
+            if self.get_piece(target_square) != '':
+                yield target_square
+        if start_square.file != 7:
+            target_square = start_square.shift(1, 1)
+            if self.get_piece(target_square) != '':
+                yield target_square
+        if start_square.rank != 1:
+            return
+        target_square = start_square.shift(0, 2)
+        if self.get_piece(target_square) == '':
+            yield target_square
+
+    def getsquares_knight(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        for dx, dy in product([-2, -1, 1, 2], repeat=2):
+            target_square = start_square.shift(dx, dy)
+            if abs(dx) != abs(dy) and target_square.isinrange():
+                yield target_square
+
+    def getsquares_bishop(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        for x, y in zip(range(start_square.file-1, -1, -1), 
+                        range(start_square.rank-1, -1, -1)):
+            target_square = BoardSquare(x, y)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+        for x, y in zip(range(start_square.file+1, 8, 1), 
+                        range(start_square.rank-1, -1, -1)):
+            target_square = BoardSquare(x, y)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+        for x, y in zip(range(start_square.file-1, -1, -1), 
+                        range(start_square.rank+1, 8, 1)):
+            target_square = BoardSquare(x, y)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+        for x, y in zip(range(start_square.file+1, 8, 1), 
+                        range(start_square.rank+1, 8, 1)):
+            target_square = BoardSquare(x, y)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+
+    def getsquares_rook(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        for y in range(start_square.rank+1, 8, 1):
+            target_square = BoardSquare(start_square.file, y)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+        for y in range(start_square.rank-1, -1, -1):
+            target_square = BoardSquare(start_square.file, y)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+        for x in range(start_square.file+1, 8, 1):
+            target_square = BoardSquare(x, start_square.rank)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+        for x in range(start_square.file-1, -1, -1):
+            target_square = BoardSquare(x, start_square.rank)
+            yield target_square
+            if self.get_piece(target_square) != '':
+                break
+    
+    def getsquares_queen(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        for target_square in self.getsquares_bishop(start_square):
+            yield target_square
+        for target_square in self.getsquares_rook(start_square):
+            yield target_square
+
+    def getsquares_king(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        for x, y in product(range(max(0, start_square.rank-1), min(start_square.rank + 1, 7) + 1), 
+                            range(max(0, start_square.file-1), min(start_square.file + 1, 7) + 1)):
+            target_square = BoardSquare(x, y)
+            if target_square != start_square:
+                yield target_square
+    
+    def getsquares_wking(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        for target_square in self.getsquares_king(start_square):
+            yield target_square
+        if start_square == (KINGS_FILE, 7):
+            return
+        if (self.castles['Q'] and self.get_rank(7)[:5] == ['R', '', '', '', 'K'] and 
+            not(self.isattacked(BoardSquare(3, 7)))): 
+            yield BoardSquare(2, 7)
+        if (self.castles['K'] and self.get_rank(7)[4:] == ['K', '', '', 'R'] and 
+            not(self.isattacked(BoardSquare(5, 7)))): 
+            yield BoardSquare(6, 7)
+
+    def getsquares_bking(self, start_square: BoardSquare) -> Generator[BoardSquare]:
+        for target_square in self.getsquares_king(start_square):
+            yield target_square
+        if start_square == (KINGS_FILE, 0):
+            return
+        if (self.castles['q'] and self.get_rank(0)[:5] == ['r', '', '', '', 'k'] and 
+            not(self.isattacked(BoardSquare(3, 0)))): 
+            yield BoardSquare(2, 0)
+        if (self.castles['k'] and self.get_rank(0)[4:] == ['k', '', '', 'r'] and 
+            not(self.isattacked(BoardSquare(5, 0)))): 
+            yield BoardSquare(6, 0)
