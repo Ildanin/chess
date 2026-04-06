@@ -343,10 +343,8 @@ class Position:
             knight = 'n'
         else:
             knight = 'N'
-        for dx, dy in product([-2, -1, 1, 2], repeat=2):
-            knight_square = square.shift(dx, dy)
-            if (abs(dx) != abs(dy) and knight_square.isinrange() and
-                self.get_piece(knight_square) == knight):
+        for square in self.getsquares_king(square):
+            if self.get_piece(square) == knight:
                 return True
         return False
     
@@ -357,34 +355,10 @@ class Position:
         else:
             bishop = 'B'
             queen = 'Q'
-        for x, y in zip(range(square.file-1, -1, -1), 
-                        range(square.rank-1, -1, -1)):
-            piece = self.get_piece(BoardSquare(x, y))
+        for square in self.getsquares_bishop(square):
+            piece = self.get_piece(square)
             if piece == bishop or piece == queen:
                 return True
-            if piece != '':
-                break
-        for x, y in zip(range(square.file+1, 8, 1), 
-                        range(square.rank-1, -1, -1)):
-            piece = self.get_piece(BoardSquare(x, y))
-            if piece == bishop or piece == queen:
-                return True
-            if piece != '':
-                break
-        for x, y in zip(range(square.file-1, -1, -1), 
-                        range(square.rank+1, 8, 1)):
-            piece = self.get_piece(BoardSquare(x, y))
-            if piece == bishop or piece == queen:
-                return True
-            if piece != '':
-                break
-        for x, y in zip(range(square.file+1, 8, 1), 
-                        range(square.rank+1, 8, 1)):
-            piece = self.get_piece(BoardSquare(x, y))
-            if piece == bishop or piece == queen:
-                return True
-            if piece != '':
-                break
         return False
     
     def isattacked_by_rook_queen(self, square: BoardSquare) -> bool:
@@ -394,30 +368,10 @@ class Position:
         else:
             rook = 'R'
             queen = 'Q'
-        for y in range(square.rank+1, 8, 1):
-            piece = self.get_piece(BoardSquare(square.file, y))
+        for square in self.getsquares_rook(square):
+            piece = self.get_piece(square)
             if piece == rook or piece == queen:
                 return True
-            if piece != '':
-                break
-        for y in range(square.rank-1, -1, -1):
-            piece = self.get_piece(BoardSquare(square.file, y))
-            if piece == rook or piece == queen:
-                return True
-            if piece != '':
-                break
-        for x in range(square.file+1, 8, 1):
-            piece = self.get_piece(BoardSquare(x, square.rank))
-            if piece == rook or piece == queen:
-                return True
-            if piece != '':
-                break
-        for x in range(square.file-1, -1, -1):
-            piece = self.get_piece(BoardSquare(x, square.rank))
-            if piece == rook or piece == queen:
-                return True
-            if piece != '':
-                break
         return False
     
     def isattacked_by_king(self, square: BoardSquare) -> bool:
@@ -425,9 +379,8 @@ class Position:
             king = 'k'
         else:
             king = 'K'
-        for x, y in product(range(max(0, square.rank-1), min(square.rank + 1, 7) + 1), 
-                            range(max(0, square.file-1), min(square.file + 1, 7) + 1)):
-            if self.get_piece(BoardSquare(x, y)) == king:
+        for square in self.getsquares_king(square):
+            if self.get_piece(square) == king:
                 return True
         return False
     
