@@ -34,37 +34,37 @@ class BoardSquare:
         return x_comp + y_comp
 
 class BoardMove:
-    def __init__(self, start_square: BoardSquare, target_square: BoardSquare) -> None:
-        self.start_square = start_square
-        self.target_square = target_square
-        self.file1 = start_square.file
-        self.rank1 = start_square.rank
-        self.file2 = target_square.file
-        self.rank2 = target_square.rank
+    def __init__(self, start: BoardSquare, target: BoardSquare) -> None:
+        self.start = start
+        self.target = target
+        self.file1 = start.file
+        self.rank1 = start.rank
+        self.file2 = target.file
+        self.rank2 = target.rank
         self.dx = None
         self.dy = None
     
     def __str__(self) -> str:
-        return f"({self.start_square} {self.target_square})"
+        return f"({self.start} {self.target})"
     
     def __iter__(self) -> Iterator[int]:
-        return iter((*self.start_square, *self.target_square))
+        return iter((*self.start, *self.target))
     
     def __eq__(self, move: object) -> bool:
         if move == None:
             return False
         elif type(move) != BoardMove:
             raise ValueError(f"BoardSquare object cannot be compared with {type(move)} object")
-        return(self.start_square == move.start_square and self.target_square == move.target_square)
+        return(self.start == move.start and self.target == move.target)
     
     def get_dx(self) -> int:
         if self.dx == None:
-            self.dx = self.target_square.file - self.start_square.file
+            self.dx = self.target.file - self.start.file
         return self.dx
     
     def get_dy(self) -> int:
         if self.dy == None:
-            self.dy = self.target_square.rank - self.start_square.rank
+            self.dy = self.target.rank - self.start.rank
         return self.dy
 
 def algebraic_to_board(algebraic: str) -> BoardSquare:
