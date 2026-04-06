@@ -343,7 +343,7 @@ class Position:
             knight = 'n'
         else:
             knight = 'N'
-        for square in self.getsquares_knight(square):
+        for square in self.getsquares_king(square):
             if self.get_piece(square) == knight:
                 return True
         return False
