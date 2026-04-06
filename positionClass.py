@@ -306,7 +306,7 @@ class Position:
                 return True
         return False
     
-    def isattacked(self, square: BoardSquare) -> bool: #rework
+    def isattacked(self, square: BoardSquare) -> bool:
         "Returns True if the given square is attacked by an enemy piece, False otherwise"
         if self.white_move:
             enemy_pieces = ['n', 'b', 'r', 'q', 'k']
@@ -343,30 +343,22 @@ class Position:
         return False
     
     def isattacked_by_knight(self, square: BoardSquare, knight: str) -> bool:
-        for attack_square in self.getsquares_knight(square):
-            if self.get_piece(attack_square) == knight:
-                return True
-        return False
+        return any(self.get_piece(attack_square) == knight 
+                   for attack_square in self.getsquares_knight(square))
     
     def isattacked_by_bishop_queen(self, square: BoardSquare, bishop: str, queen: str) -> bool:
-        for attack_square in self.getsquares_bishop(square):
-            piece = self.get_piece(attack_square)
-            if piece == bishop or piece == queen:
-                return True
-        return False
+        return any(self.get_piece(attack_square) == bishop or 
+                   self.get_piece(attack_square) == queen 
+                   for attack_square in self.getsquares_bishop(square))
     
     def isattacked_by_rook_queen(self, square: BoardSquare, rook: str, queen: str) -> bool:
-        for attack_square in self.getsquares_rook(square):
-            piece = self.get_piece(attack_square)
-            if piece == rook or piece == queen:
-                return True
-        return False
+        return any(self.get_piece(attack_square) == rook or 
+                   self.get_piece(attack_square) == queen 
+                   for attack_square in self.getsquares_rook(square))
     
     def isattacked_by_king(self, square: BoardSquare, king: str) -> bool:
-        for attack_square in self.getsquares_king(square):
-            if self.get_piece(attack_square) == king:
-                return True
-        return False
+        return any(self.get_piece(attack_square) == king 
+                   for attack_square in self.getsquares_king(square))
     
     def getcandidates(self, square: BoardSquare, piece: str) -> list[BoardSquare]: #rework
         "Returns the list of squares from wich the piece can be moved to the given square"
