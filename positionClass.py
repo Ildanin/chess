@@ -503,6 +503,9 @@ class Position:
         target_square = start_square.shift(0, -1)
         if self.get_piece(target_square) == '':
             yield target_square
+            target_square = start_square.shift(0, -2)
+            if start_square.rank == 6 and self.get_piece(target_square) == '':
+                yield target_square
         if start_square.file != 0:
             target_square = start_square.shift(-1, -1)
             if self.get_piece(target_square) != '' or target_square == self.en_passant:
@@ -511,16 +514,14 @@ class Position:
             target_square = start_square.shift(1, -1)
             if self.get_piece(target_square) != '' or target_square == self.en_passant:
                 yield target_square
-        if start_square.rank != 6:
-            return
-        target_square = start_square.shift(0, -2)
-        if self.get_piece(target_square) == '':
-            yield target_square
     
     def getsquares_bpawn(self, start_square: BoardSquare) -> Generator[BoardSquare]:
         target_square = start_square.shift(0, 1)
         if self.get_piece(target_square) == '':
             yield target_square
+            target_square = start_square.shift(0, 2)
+            if start_square.rank == 1 and self.get_piece(target_square) == '':
+                yield target_square
         if start_square.file != 0:
             target_square = start_square.shift(-1, 1)
             if self.get_piece(target_square) != '' or target_square == self.en_passant:
@@ -529,11 +530,6 @@ class Position:
             target_square = start_square.shift(1, 1)
             if self.get_piece(target_square) != '' or target_square == self.en_passant:
                 yield target_square
-        if start_square.rank != 1:
-            return
-        target_square = start_square.shift(0, 2)
-        if self.get_piece(target_square) == '':
-            yield target_square
     
     def getsquares_knight(self, start_square: BoardSquare) -> Generator[BoardSquare]:
         for dx, dy in product([-2, -1, 1, 2], repeat=2):
