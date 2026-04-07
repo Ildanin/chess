@@ -24,7 +24,7 @@ class Position:
     def __iter__(self):
         return iter(self.pos_array)
     
-    def flush(self) -> None:
+    def reset(self) -> None:
         self.__init__(self.history[0])
     
     def get_FEN(self) -> ForsythEdwardsNotation:

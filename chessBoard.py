@@ -56,6 +56,11 @@ class ChessBoard:
             }
         self.draw()
 
+    def reset(self) -> None:
+        self.position.reset()
+        self.prev_square = None
+        self.draw()
+
     def get_square(self, mouse_x: int, mouse_y: int) -> BoardSquare: #add flip
         "Returns the coordinates of the square relative to its position on the screen"
         file = (mouse_x-self.x) // self.square_size
