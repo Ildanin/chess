@@ -122,6 +122,7 @@ class Position:
             self.fullmove_number += 1
         self.raw_move(move, promote_to)
         self.white_move = not self.white_move
+        self.history.append(self.get_FEN())
         return True
     
     def raw_move(self, move: BoardMove, promote_to: str | None = None) -> None:
@@ -358,7 +359,7 @@ class Position:
     def isattacked_by_king(self, square: BoardSquare, king: str) -> bool:
         return any(self.getcandidates_king(square, king))
     
-    def getcandidates(self, square: BoardSquare, piece: str) -> Generator[BoardSquare]: #rework
+    def getcandidates(self, square: BoardSquare, piece: str) -> Generator[BoardSquare]:
         "Returns the list of squares from wich the piece can be moved to the given square"
         match piece:
             case 'P':       return self.getcandidates_wpawn(square)
