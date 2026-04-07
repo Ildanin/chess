@@ -23,18 +23,17 @@ while True:
                 #board.reset()
                 pass
     
-    '''possible_moves = board.position_handler.get_possible_moves()
-    if board.move_piece(*possible_moves[randrange(0, len(possible_moves))]):
+    '''print(board.position.history[-1])
+    possible_moves = list(board.position.get_possible_moves())
+    if board.position.move(possible_moves[randrange(0, len(possible_moves))]):
         board.draw()
-    if board.position_handler.is_checkmate():
+    if board.ischekmate():
         print('Checkmate')
-        print(board.history[-1])
         exit()
-    elif board.position_handler.is_draw():
+    elif board.position.isdraw():
         print('Draw')
-        print(board.history[-1])
         exit()'''
     
     pg.display.flip()
 
-    clock.tick(1000)
+    clock.tick(20)
