@@ -22,7 +22,7 @@ WQ = pg.image.load(os.path.join("assets", "white_queen.png "))
 WR = pg.image.load(os.path.join("assets", "white_rook.png"))
 
 class ChessBoard:
-    def __init__(self, screen: pg.Surface, x: int, y: int, size: int = BOARD_SIZE, position: Position = Position(ForsythEdwardsNotation()),
+    def __init__(self, screen: pg.Surface, x: int, y: int, size: int = BOARD_SIZE, position: Position = Position(),
                  white_color: tuple = WHITE_COLOR, black_color: tuple = BLACK_COLOR, highlight_clor: tuple = HIGHLIGHT_COLOR, higlight_moves: bool = HIGHLIGHT_MOVES) -> None:
         self.screen = screen
         self.x = x

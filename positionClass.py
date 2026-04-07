@@ -12,7 +12,7 @@ WHITE_BACK_RANK = 7
 BLACK_BACK_RANK = 0
 
 class Position:
-    def __init__(self, init_position: ForsythEdwardsNotation):
+    def __init__(self, init_position: ForsythEdwardsNotation = ForsythEdwardsNotation()):
         self.history = [init_position]
         self.pos_array = init_position.get_position_array()
         self.white_move = init_position.get_white_move()
