@@ -87,3 +87,11 @@ class PortableGameNotation:
             move = get_board_move(alg_move, position)
             yield move
             position.move(move, [move.target])
+    
+    def get_FENs(self) -> Generator[ForsythEdwardsNotation]:
+        alg_moves = self.get_formatted_alg_moves()
+        position = Position(self.init_position)
+        for alg_move in alg_moves:
+            yield position.get_FEN()
+            move = get_board_move(alg_move, position)
+            position.move(move, [move.target])
