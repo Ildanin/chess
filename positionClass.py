@@ -366,7 +366,7 @@ class Position:
         return any(self.getcandidates_king(square, king))
     
     def getcandidates(self, square: BoardSquare, piece: str) -> Generator[BoardSquare]:
-        "Returns the list of squares from wich the piece can be moved to the given square"
+        "Returns the list of squares from which the piece can be moved to the given square"
         match piece:
             case 'P':       return self.getcandidates_wpawn(square)
             case 'p':       return self.getcandidates_bpawn(square)
