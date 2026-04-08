@@ -53,7 +53,7 @@ class Position:
         if notation[-1] == ' ':
             notation += '-'
         if self.en_passant:
-            notation += self.en_passant.get_algebraic()
+            notation += f" {self.en_passant.get_algebraic()} "
         else:
             notation += ' - '
         notation += f'{self.halfmove_clock} {self.fullmove_number}'
