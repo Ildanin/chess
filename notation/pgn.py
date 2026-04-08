@@ -12,14 +12,14 @@ from positionClass import Position, WHITE_KING_SQUARE, BLACK_KING_SQUARE, WHITE_
 def get_board_move(alg_move: str, position: Position) -> BoardMove:
     if alg_move == 'O-O':
         if position.white_move:
-            return BoardMove(WHITE_KING_SQUARE, BoardSquare(5, WHITE_BACK_RANK))
+            return BoardMove(WHITE_KING_SQUARE, BoardSquare(6, WHITE_BACK_RANK))
         else:
-            return BoardMove(BLACK_KING_SQUARE, BoardSquare(5, BLACK_BACK_RANK))
+            return BoardMove(BLACK_KING_SQUARE, BoardSquare(6, BLACK_BACK_RANK))
     if alg_move == 'O-O-O':
         if position.white_move:
-            return BoardMove(WHITE_KING_SQUARE, BoardSquare(3, WHITE_BACK_RANK))
+            return BoardMove(WHITE_KING_SQUARE, BoardSquare(2, WHITE_BACK_RANK))
         else:
-            return BoardMove(BLACK_KING_SQUARE, BoardSquare(3, BLACK_BACK_RANK))
+            return BoardMove(BLACK_KING_SQUARE, BoardSquare(2, BLACK_BACK_RANK))
     if alg_move[-2] == '=':
         promote_to = alg_move[-1]
         alg_move = alg_move[:-2]
