@@ -13,7 +13,8 @@ BLACK_BACK_RANK = 0
 
 class Position:
     def __init__(self, init_position: ForsythEdwardsNotation = ForsythEdwardsNotation()):
-        self.history = [init_position]
+        self.init_position = init_position
+        self.history: list[BoardMove] = []
         self.pos_array = init_position.get_position_array()
         self.white_move = init_position.get_white_move()
         self.castles = init_position.get_castles()
@@ -25,7 +26,7 @@ class Position:
         return iter(self.pos_array)
     
     def reset(self) -> None:
-        self.__init__(self.history[0])
+        self.__init__(self.init_position)
     
     def get_FEN(self) -> ForsythEdwardsNotation:
         notation = ''
@@ -122,7 +123,7 @@ class Position:
             self.fullmove_number += 1
         self.raw_move(move, promote_to)
         self.white_move = not self.white_move
-        self.history.append(self.get_FEN())
+        self.history.append(move)
         return True
     
     def raw_move(self, move: BoardMove, promote_to: str | None = None) -> None:
