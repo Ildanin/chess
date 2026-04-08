@@ -71,14 +71,11 @@ class PortableGameNotation:
     
     def get_formatted_alg_move_list(self) -> list[str]:
         formatted_move_list: list[str] = []
-        for i, alg_move in enumerate(self.get_alg_move_list()):
+        for alg_move in self.get_alg_move_list():
             alg_move = alg_move.replace('x', '')
             alg_move = alg_move.replace('+', '')
             alg_move = alg_move.replace('#', '')
-            if len(alg_move) == 2 or not(alg_move[0].lower() in ['n', 'b', 'r', 'q', 'k', 'o']):
-                if i%2 == 0:
-                    alg_move = 'P' + alg_move
-                else:
-                    alg_move = 'p' + alg_move
+            if alg_move[0].islower():
+                alg_move = 'P' + alg_move
             formatted_move_list.append(alg_move)
         return formatted_move_list
