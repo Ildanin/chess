@@ -11,6 +11,9 @@ KING_ROOKS_FILE = 7
 WHITE_BACK_RANK = 7
 BLACK_BACK_RANK = 0
 
+WHITE_KING_SQUARE = BoardSquare(KINGS_FILE, WHITE_BACK_RANK)
+BLACK_KING_SQUARE = BoardSquare(KINGS_FILE, BLACK_BACK_RANK)
+
 class Position:
     def __init__(self, init_position: ForsythEdwardsNotation = ForsythEdwardsNotation()):
         self.init_position = init_position
@@ -550,7 +553,7 @@ class Position:
     def getsquares_wking(self, start: BoardSquare) -> Generator[BoardSquare]:
         for target in self.getsquares_king(start):
             yield target
-        if start != (KINGS_FILE, WHITE_BACK_RANK):
+        if start != WHITE_KING_SQUARE:
             return
         if (self.castles['Q'] and self.get_rank(WHITE_BACK_RANK)[:5] == ['R', '', '', '', 'K'] and 
             not(self.isattacked(BoardSquare(3, WHITE_BACK_RANK)))):
@@ -562,7 +565,7 @@ class Position:
     def getsquares_bking(self, start: BoardSquare) -> Generator[BoardSquare]:
         for target in self.getsquares_king(start):
             yield target
-        if start != (KINGS_FILE, BLACK_BACK_RANK):
+        if start != BLACK_KING_SQUARE:
             return
         if (self.castles['q'] and self.get_rank(BLACK_BACK_RANK)[:5] == ['r', '', '', '', 'k'] and 
             not(self.isattacked(BoardSquare(3, BLACK_BACK_RANK)))):
