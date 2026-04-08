@@ -1,6 +1,6 @@
 from notation.fen import ForsythEdwardsNotation
-from notation.square import BoardMove
-from positionClass import Position
+from notation.square import BoardMove, BoardSquare, algebraic_to_board
+from positionClass import Position, WHITE_KING_SQUARE, BLACK_KING_SQUARE, WHITE_BACK_RANK, BLACK_BACK_RANK
 
 #pgn notation
 #Pe4 pe6 Pd4 pb6 Pa3 Bb7 Nc3 Nh6 Bh6 gh6 Be2 Qg5 Bg4 ph5 Nf3 Qg6 Nh4 Qg5 Bh5 Qh4 Qf3 Kd8 Qf7 Nc6 Qe8
@@ -63,24 +63,24 @@ class PortableGameNotation:
     def get_results(self) -> str:
         return self.string.split()[-1]
 
-    def get_move_list(self) -> list[str]:
+    def get_alg_move_list(self) -> list[str]:
         unfiltered_list = self.string.split()
         filtered_list: list[str] = []
-        for move in unfiltered_list[:-1]:
-            if not(move[0].isdigit()):
-                filtered_list.append(move)
+        for alg_move in unfiltered_list[:-1]:
+            if not(alg_move[0].isdigit()):
+                filtered_list.append(alg_move)
         return filtered_list
     
-    def get_formatted_move_list(self) -> list[str]:
+    def get_formatted_alg_move_list(self) -> list[str]:
         formatted_move_list: list[str] = []
-        for i, move in enumerate(self.get_move_list()):
-            move = move.replace('x', '')
-            move = move.replace('+', '')
-            move = move.replace('#', '')
-            if len(move) == 2:
+        for i, alg_move in enumerate(self.get_alg_move_list()):
+            alg_move = alg_move.replace('x', '')
+            alg_move = alg_move.replace('+', '')
+            alg_move = alg_move.replace('#', '')
+            if len(alg_move) == 2 or not(alg_move[0].lower() in ['n', 'b', 'r', 'q', 'k', 'o']):
                 if i%2 == 0:
-                    move = 'P' + move
+                    alg_move = 'P' + alg_move
                 else:
-                    move = 'p' + move
-            formatted_move_list.append(move)
+                    alg_move = 'p' + alg_move
+            formatted_move_list.append(alg_move)
         return formatted_move_list
