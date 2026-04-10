@@ -350,7 +350,8 @@ class Position:
         return False
     
     def isattacked_by_knight(self, square: BoardSquare, knight: str) -> bool:
-        return any(self.getcandidates_knight(square, knight))
+        return any(self.get_piece(attack_square) == knight 
+                   for attack_square in self.getsquares_knight(square))
     
     def isattacked_by_bishop_queen(self, square: BoardSquare, bishop: str, queen: str) -> bool:
         return any(self.get_piece(attack_square) == bishop or 
@@ -363,7 +364,8 @@ class Position:
                    for attack_square in self.getsquares_rook(square))
     
     def isattacked_by_king(self, square: BoardSquare, king: str) -> bool:
-        return any(self.getcandidates_king(square, king))
+        return any(self.get_piece(attack_square) == king 
+                   for attack_square in self.getsquares_king(square))
     
     def getcandidates(self, square: BoardSquare, piece: str) -> Generator[BoardSquare]:
         "Returns the list of squares from which the piece can be moved to the given square"
@@ -416,13 +418,13 @@ class Position:
                     yield start
     
     def getcandidates_knight(self, target: BoardSquare, knight: str) -> Generator[BoardSquare]:
-        return(start for start in self.getsquares_knight(target) if self.get_piece(start) == knight)
+        return(start for start in self.getsquares_knight(target) if self.get_piece(start) == knight and self.is_king_safe(BoardMove(start, target)))
     
     def getcandidates_bishop(self, target: BoardSquare, bishop: str) -> Generator[BoardSquare]:
-        return(start for start in self.getsquares_bishop(target) if self.get_piece(start) == bishop)
+        return(start for start in self.getsquares_bishop(target) if self.get_piece(start) == bishop and self.is_king_safe(BoardMove(start, target)))
     
     def getcandidates_rook(self, target: BoardSquare, rook: str) -> Generator[BoardSquare]:
-        return(start for start in self.getsquares_rook(target) if self.get_piece(start) == rook)
+        return(start for start in self.getsquares_rook(target) if self.get_piece(start) == rook and self.is_king_safe(BoardMove(start, target)))
     
     def getcandidates_queen(self, target: BoardSquare, queen: str) -> Generator[BoardSquare]:
         for start in self.getcandidates_bishop(target, queen):
@@ -433,7 +435,7 @@ class Position:
                 yield start
     
     def getcandidates_king(self, target: BoardSquare, king: str) -> Generator[BoardSquare]:
-        return(start for start in self.getsquares_king(target) if self.get_piece(start) == king)
+        return(start for start in self.getsquares_king(target) if self.get_piece(start) == king and self.is_king_safe(BoardMove(start, target)))
     
     def getsquares(self, start: BoardSquare, piece: str) -> Generator[BoardSquare]:
         """Returns the squares to which the piece can move ignoring king's safety and piece colors.
