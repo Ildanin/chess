@@ -4,15 +4,20 @@ from notation.square import BoardSquare, BoardMove
 from itertools import product
 from typing import Generator
 
-KINGS_FILE = 4
-QUEEN_ROOKS_FILE = 0
-KING_ROOKS_FILE = 7
+KING_FILE = 4
+QUEEN_ROOK_FILE = 0
+KING_ROOK_FILE = 7
 
 WHITE_BACK_RANK = 7
 BLACK_BACK_RANK = 0
 
-WHITE_KING_SQUARE = BoardSquare(KINGS_FILE, WHITE_BACK_RANK)
-BLACK_KING_SQUARE = BoardSquare(KINGS_FILE, BLACK_BACK_RANK)
+WHITE_KING_SQUARE = BoardSquare(KING_FILE, WHITE_BACK_RANK)
+BLACK_KING_SQUARE = BoardSquare(KING_FILE, BLACK_BACK_RANK)
+
+WHITE_QUEEN_ROOK_SQUARE = BoardSquare(QUEEN_ROOK_FILE, WHITE_BACK_RANK)
+WHITE_KING_ROOK_SQUARE = BoardSquare(KING_ROOK_FILE, WHITE_BACK_RANK)
+BLACK_QUEEN_ROOK_SQUARE = BoardSquare(QUEEN_ROOK_FILE, BLACK_BACK_RANK)
+BLACK_KING_ROOK_SQUARE = BoardSquare(KING_ROOK_FILE, BLACK_BACK_RANK)
 
 class Position:
     def __init__(self, init_position: ForsythEdwardsNotation = ForsythEdwardsNotation()):
@@ -135,7 +140,7 @@ class Position:
         self.set_piece(move.target, piece)
         self.set_piece(move.start, '')
         self.handle_en_passant(move, piece)
-        self.handle_castling(move.file1, move.file2, piece)
+        self.handle_castling(move, piece)
         self.handle_promotion(move, piece)
     
     def handle_en_passant(self, move: BoardMove, piece: str) -> None:
@@ -153,35 +158,35 @@ class Position:
                 return None
         self.en_passant = None
     
-    def handle_castling(self, file1: int, file2: int, piece: str) -> None:
+    def handle_castling(self, move: BoardMove, piece: str) -> None:
         if piece == 'R':
-            if file1 == QUEEN_ROOKS_FILE:
+            if move.start == WHITE_QUEEN_ROOK_SQUARE:
                 self.castles['Q'] = False
-            elif file1 == KING_ROOKS_FILE:
+            elif move.start == WHITE_KING_ROOK_SQUARE:
                 self.castles['K'] = False
         elif piece == 'r':
-            if file1 == QUEEN_ROOKS_FILE:
+            if move.start == BLACK_QUEEN_ROOK_SQUARE:
                 self.castles['q'] = False
-            elif file1 == KING_ROOKS_FILE:
+            elif move.start == BLACK_KING_ROOK_SQUARE:
                 self.castles['k'] = False
         elif piece == 'K':
             self.castles['Q'] = False
             self.castles['K'] = False
-            if file1 == KINGS_FILE:
-                if file2 == 2:
+            if move.file1 == KING_FILE:
+                if move.file2 == 2:
                     self.set_piece(BoardSquare(3, 7), 'R')
                     self.set_piece(BoardSquare(0, 7), '')
-                elif file2 == 6:
+                elif move.file2 == 6:
                     self.set_piece(BoardSquare(5, 7), 'R')
                     self.set_piece(BoardSquare(7, 7), '')
         elif piece == 'k':
             self.castles['q'] = False
             self.castles['k'] = False
-            if file1 == KINGS_FILE:
-                if file2 == 2:
+            if move.file1 == KING_FILE:
+                if move.file2 == 2:
                     self.set_piece(BoardSquare(3, 0), 'r')
                     self.set_piece(BoardSquare(0, 0), '')
-                elif file2 == 6:
+                elif move.file2 == 6:
                     self.set_piece(BoardSquare(5, 0), 'r')
                     self.set_piece(BoardSquare(7, 0), '')
     
