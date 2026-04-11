@@ -20,7 +20,14 @@ class BoardSquare:
         elif type(square) != BoardSquare:
             raise ValueError(f"BoardSquare object cannot be compared with {type(square)} object")
         return(self.file == square.file and self.rank == square.rank)
-
+    
+    def encode(self) -> str:
+        if not self.isinrange():
+            raise ValueError("Cannot encode a square that is outside of the board")
+        rank = bin(self.rank)[2:].zfill(3)
+        file = bin(self.file)[2:].zfill(3)
+        return file + rank
+    
     def isinrange(self, lower_bound: int = 0, upper_bound: int = 8) -> bool:
         return(lower_bound <= self.file < upper_bound and 
                lower_bound <= self.rank < upper_bound)
@@ -57,6 +64,9 @@ class BoardMove:
         elif type(move) != BoardMove:
             raise ValueError(f"BoardSquare object cannot be compared with {type(move)} object")
         return(self.start == move.start and self.target == move.target)
+    
+    def encode(self) -> str:
+        return self.start.encode() + self.target.encode()
     
     def get_dx(self) -> int:
         if self.dx == None:
