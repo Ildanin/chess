@@ -84,3 +84,11 @@ def algebraic_to_board(algebraic: str) -> BoardSquare:
     file = 'abcdefgh'.index(x_comp)
     rank = 8 - int(y_comp)
     return BoardSquare(file, rank)
+
+def square_decode(encoded_square: str) -> BoardSquare:
+    return BoardSquare(int(encoded_square[:3], 2), 
+                       int(encoded_square[3:], 2))
+
+def move_decode(endoded_move: str) -> BoardMove:
+    return BoardMove(square_decode(endoded_move[:6]), 
+                     square_decode(endoded_move[6:]))
