@@ -12,9 +12,6 @@ BLACK_COLOR = (118, 150, 86)
 HIGHLIGHT_COLOR = (0, 255, 0)
 HIGHLIGHT_MOVES = True
 
-#Data
-UNTRANSFORMED = "lichess_db_standard_rated_2013-01.pgn"
-
 #Network stats
 INFO = [2, 10, 10, 3]
 ACTIVATOR = 'L_ReLU'
