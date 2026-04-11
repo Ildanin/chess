@@ -22,13 +22,12 @@ def get_games(input_filename: str, output_filename: str | None = None) -> str:
                     black_elo = 1000
                 avg_elo = (black_elo + white_elo) // 2
             elif line.split()[0] == '1.':
-                pgn_string = remove_evaluations(line)
-                pgn_string = remove_assessments(pgn_string)
-                data.append((avg_elo, pgn_string))
+                game = remove_evaluations(line)
+                game = remove_assessments(game)
+                data.append((avg_elo, game))
     with open(output_filename, 'w') as out_file:
-        for avg_elo, pgn_string in sorted(data, key=lambda d: d[0], reverse=True):
-            out_file.write("LobbyElo " + str(avg_elo) + '\n')
-            out_file.write(pgn_string)
+        for avg_elo, game in sorted(data, reverse=True):
+            out_file.write(game)
     return output_filename
 
 def remove_evaluations(pgn_string: str) -> str:
