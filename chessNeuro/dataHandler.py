@@ -45,18 +45,16 @@ def remove_assessments(pgn_string: str) -> str:
     pgn_string = pgn_string.replace('!', '')
     return pgn_string
 
-def data_load(filename: str, start: int = 0, stop: int | None = None) -> list[tuple[int, PortableGameNotation]]:
-        data: list[tuple] = []
-        with open(filename) as file:
-            for i, line in enumerate(file):
-                if start > i//2 or (stop != None and i//2 >= stop):
-                    continue
-                if line.split()[0] == "LobbyElo":
-                    elo = int(line.split()[-1])
-                elif line.split()[0] == '1.':
-                    pgn = PortableGameNotation(line[:-1])
-                    data.append((elo, pgn))
-        return data[:-1]
+def get_games(filename: str, start: int = 0, stop: int | None = None) -> list[PortableGameNotation]:
+    games = []
+    with open(filename) as file:
+        for i, line in enumerate(file):
+            if start > i:
+                continue
+            if stop != None and stop <= i:
+                break
+            games.append(PortableGameNotation(line))
+    return games
 
 if __name__ == '__main__':
     create_games_file("lichess_db_standard_rated_2013-01.pgn", "dataset.txt")
