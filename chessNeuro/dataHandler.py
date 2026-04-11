@@ -2,6 +2,7 @@ from notation.pgn import PortableGameNotation
 from config import UNTRANSFORMED
 
 def get_games(input_filename: str, output_filename: str | None = None) -> str:
+    "Returns the file with games in descending average ELO order"
     if output_filename == None:
         output_filename = input_filename.partition('.')[0] + '.txt'
     data: list[tuple] = []
