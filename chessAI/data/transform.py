@@ -48,4 +48,25 @@ def remove_assessments(pgn_string: str) -> str:
     return pgn_string
 
 if __name__ == '__main__':
+    from time import perf_counter
+
+    database = "lichess_db_standard_rated_2013-01.pgn"
+    filename = "data.txt"
+    threshold = None
+
+    inp_database = input(f"Database: (default={database})")
+    inp_filename = input(f"Filename: (default={filename})")
+    inp_threshold = input(f"threshold: (default={None})")
+    
+    if inp_database != "":
+        database = inp_database
+    if inp_filename != "":
+        filename = inp_filename
+    if inp_threshold != "":
+        threshold = inp_threshold
+    
+    t1 = perf_counter()
     generate_games_file("lichess_db_standard_rated_2013-01.pgn", "data.txt")
+    t2 = perf_counter()
+    print('======================================')
+    print(f"Finished in {round(t2-t1, 2)} seconds")
