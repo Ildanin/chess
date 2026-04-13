@@ -1,4 +1,4 @@
-from network import Network
+from network import Network, load
 from positionClass import Position
 from notation.square import BoardMove, move_decode
 from chessAI.data import position_encode
@@ -9,4 +9,11 @@ class ChessAI(Network):
         return move_decode(''.join(str(round(bit)) for bit in move))
     
     def move(self, position: Position, skip_check: bool = False) -> None:
-        position.move(self.get_move(position), skip_check=skip_check)
+        move = self.get_move(position)
+        position.move(move, skip_check=skip_check)
+
+
+def load_chessAI(filename: str) -> ChessAI:
+    ai = ChessAI([], 'linear')
+    ai.load(filename)
+    return ai
