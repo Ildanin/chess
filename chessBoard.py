@@ -145,6 +145,17 @@ class ChessBoard:
                                 self.y + y * self.square_size, 
                                 self.square_size, self.square_size))
     
+    def show_move(self, move: BoardMove) -> None:
+        pg.draw.rect(self.screen, self.highlight_clor, 
+                        pg.Rect(self.x + move.file1 * self.square_size, 
+                                self.y + move.rank1 * self.square_size, 
+                                self.square_size, self.square_size))
+        pg.draw.rect(self.screen, self.highlight_clor, 
+                        pg.Rect(self.x + move.file2 * self.square_size, 
+                                self.y + move.rank2 * self.square_size, 
+                                self.square_size, self.square_size))
+        self.draw_pieces()
+    
     def draw_promotion_screen(self) -> None: #add flip
         if self.promotion == None:
             return None
