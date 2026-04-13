@@ -10,19 +10,19 @@ def position_encode(position: Position) -> np.ndarray:
     if position.white_move:
         for piece in position.pos_array:
             match piece:
-                case '':  encoded += [0,0,0,0,0,0,0,0,0,0,0]
-                case 'P': encoded += [0,0,0,0,0,0,0,0,0,0,1]
-                case 'N': encoded += [0,0,0,0,0,0,0,0,0,1,0]
-                case 'B': encoded += [0,0,0,0,0,0,0,0,1,0,0]
-                case 'R': encoded += [0,0,0,0,0,0,0,1,0,0,0]
-                case 'Q': encoded += [0,0,0,0,0,0,0,1,1,0,0]
-                case 'K': encoded += [0,0,0,0,0,0,1,0,0,0,0]
-                case 'p': encoded += [0,0,0,0,0,1,0,0,0,0,0]
-                case 'n': encoded += [0,0,0,0,1,0,0,0,0,0,0]
-                case 'b': encoded += [0,0,0,1,0,0,0,0,0,0,0]
-                case 'r': encoded += [0,0,1,0,0,0,0,0,0,0,0]
-                case 'q': encoded += [0,1,1,0,0,0,0,0,0,0,0]
-                case 'k': encoded += [1,0,0,0,0,0,0,0,0,0,0]
+                case '':  encoded += [0,0,0,0,0,0,0,0,0,0]
+                case 'P': encoded += [0,0,0,0,0,0,0,0,0,1]
+                case 'N': encoded += [0,0,0,0,0,0,0,0,1,0]
+                case 'B': encoded += [0,0,0,0,0,0,0,1,0,0]
+                case 'R': encoded += [0,0,0,0,0,0,1,0,0,0]
+                case 'Q': encoded += [0,0,0,0,0,0,1,1,0,0]
+                case 'K': encoded += [0,0,0,0,0,1,0,0,0,0]
+                case 'p': encoded += [0,0,0,0,1,0,0,0,0,0]
+                case 'n': encoded += [0,0,0,1,0,0,0,0,0,0]
+                case 'b': encoded += [0,0,1,0,0,0,0,0,0,0]
+                case 'r': encoded += [0,1,0,0,0,0,0,0,0,0]
+                case 'q': encoded += [0,1,1,0,0,0,0,0,0,0]
+                case 'k': encoded += [1,0,0,0,0,0,0,0,0,0]
     else:
         for piece in position.pos_array:
             match piece:
