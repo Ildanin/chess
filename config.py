@@ -13,9 +13,9 @@ HIGHLIGHT_COLOR = (0, 255, 0)
 HIGHLIGHT_MOVES = True
 
 #Network stats
-INFO = [2, 10, 10, 3]
+INFO = [704, 100, 12]
 ACTIVATOR = 'L_ReLU'
-NORMALIZER = 'sigmoid'
+NORMALIZER = 'binary'
 FACTOR_RANGE = (-1, 1)
 BIAS_RANGE = (-1, 1)
 
