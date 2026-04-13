@@ -13,12 +13,12 @@ HIGHLIGHT_COLOR = (0, 255, 0)
 HIGHLIGHT_MOVES = True
 
 #Network stats
-INFO = [704, 100, 12]
+INFO = [640, 50, 12]
 ACTIVATOR = 'L_ReLU'
 NORMALIZER = 'binary'
 FACTOR_RANGE = (-1, 1)
 BIAS_RANGE = (-1, 1)
 
 #Learning stats
-ALPHA = 0.2
-CYCLES = 10
+ALPHA = 0.1
+CYCLES = 1000
